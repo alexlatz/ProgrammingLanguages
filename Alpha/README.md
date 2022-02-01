@@ -41,6 +41,19 @@ if Cone is twoS L
 J
 ```
 
+### Comments
+
+Comments in Alpha can be either single or multi-line. 
+Single line comments are indicated with the `II` symbol, and multi-line comments begin with the `bI` symbol and end with the `Id` symbol.
+
+```
+let var be five II comment
+bI 
+comment
+more comment
+Id
+```
+
 ## Variables
 
 ### Initialization
@@ -83,7 +96,7 @@ Alpha intentionally does not support functional programming (due to a high numbe
 Alpha's operators are fairly different from most languages.
 
 | Operator |         Behavior        |                  Usage                 |
-|:--------:|:-----------------------:|:--------------------------------------:|
+|:--------:|:-----------------------:|:---------------------------------------|
 |   `be`   |        Assignment       |            `varname be two`            |
 |   `add`  |         Addition        |              `one add two`             |
 |   `sub`  |       Subtraction       |              `two sub one`             |
@@ -105,3 +118,22 @@ Alpha's operators are fairly different from most languages.
 |   `not`  |       Logical NOT       |          `not Cvar is vartwoD`         |
 |   `and`  |       Logical AND       | `var is vartwo and vartwo is varthree` |
 |   `or`   |        Logical OR       |  `var is vartwo or vartwo is varthree` |
+
+## Conditionals
+
+Unlike the operators, conditionals in Alpha are mostly similar to C-style.
+
+`if` statements can be followed with `elif` or `else` and are followed by `CD` with a conditional inside. 
+
+```
+if Cvar is oneD L
+    II do something
+J elif Cvar is twoD L
+    II do something
+J else L
+    II do something
+J
+```
+
+
+
