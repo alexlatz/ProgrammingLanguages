@@ -20,14 +20,17 @@ almost all uppercase letters. We call this style **platypuscase**.
 
 ### Line Endings
 
-Most symbols have a one-to-one replacement in Alpha. One notable exception is the semicolon, as statements in Alpha are instead finished with a newline character.
+Most symbols have a one-to-one replacement in Alpha. One notable exception is the semicolon, as statements in Alpha are generally finished with a newline character.
 However, statements in Alpha can be multi-line with the use of an indent.
+
+Additionally, a line can be intentionally ended with the O character.
 
 ex. 
 ```
 let name be one X
     two
-let nametwo be two times one
+let nametwo be two X one
+let namethree be two X three O
 ```
 
 ### Creating Scope
@@ -53,6 +56,10 @@ comment
 more comment
 Id
 ```
+
+### Printing
+
+Alpha uses the `printCD` function to print output to the console, and the `printlnCD` function to print with a newline character appended after the input.
 
 ## Variables
 
@@ -135,5 +142,29 @@ J else L
 J
 ```
 
+## Looping
 
+Alpha supports for, foreach, and while loops.
+
+| Behavior |                Example                    |
+|:--------:|:------------------------------------------|
+| For loop | `for Clet i be one O i less five O i incD`|
+| For-each | `for Cvar in arrD`                        |
+| While    | `while Cvar lessis vartwoD`               |
+
+## Arrays and Lists 
+
+Both arrays and lists in Alpha are noted with the `VA` postfix.
+They are treated as lists if an initial size is excluded, and as arrays if included.
+
+```
+let listVA II list 
+let arrVfiveA II array
+```
+
+### Accessing Elements
+
+To index into an array, list, or string, Alpha uses the `VA` postfix.
+
+ex. `arrVzeroA is five`
 
