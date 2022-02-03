@@ -39,7 +39,7 @@ All scope in Alpha is separated by the `L` and `J` characters, instead of `{}` i
 Additionally, all functions and statements that usually require the `()` parentheses are replaced by `C` and `D`.
 ex. 
 ```
-if Cone is twoS L
+if Cone is twoD L
     rtrn false
 J
 ```
@@ -102,29 +102,29 @@ Alpha intentionally does not support functional programming (due to a high numbe
 
 Alpha's operators are fairly different from most languages.
 
-| Operator |         Behavior        |                  Usage                 |
+| Operator |        Behavior         | Usage                                  |
 |:--------:|:-----------------------:|:---------------------------------------|
-|   `be`   |        Assignment       |            `varname be two`            |
-|   `add`  |         Addition        |              `one add two`             |
-|   `sub`  |       Subtraction       |              `two sub one`             |
-|    `X`   |      Multiplication     |               `one X two`              |
-|   `div`  |         Division        |              `two div one`             |
-|   `mod`  |          Modulo         |              `two mod one`             |
-|  `addbe` |       Plus-equals       |             `var addbe one`            |
-|  `subbe` |       Minus-equals      |             `var subbe one`            |
-|   `Xbe`  |       Times-equals      |              `var Xbe one`             |
-|  `divbe` |      Divide-equals      |             `var divbe one`            |
-|  `modbe` |      Modulo-equals      |             `var modbe one`            |
-|   `inc`  |        Increment        |                `var inc`               |
-|   `dec`  |        Decrement        |                `var dec`               |
-|  `less`  |       Lesser than       |            `var less vartwo`           |
-|  `more`  |        More than        |            `var more vartwo`           |
-|   `is`   |         Equal to        |             `var is vartwo`            |
-| `lessis` | Lesser than or equal to |           `var lessis vartwo`          |
-| `moreis` |  More than or equal to  |           `var moreis vartwo`          |
-|   `not`  |       Logical NOT       |          `not Cvar is vartwoD`         |
-|   `and`  |       Logical AND       | `var is vartwo and vartwo is varthree` |
-|   `or`   |        Logical OR       |  `var is vartwo or vartwo is varthree` |
+|   `be`   |       Assignment        | `varname be two`                       |
+|  `add`   |        Addition         | `one add two`                          |
+|  `sub`   |       Subtraction       | `two sub one`                          |
+|   `X`    |     Multiplication      | `one X two`                            |
+|  `div`   |        Division         | `two div one`                          |
+|  `mod`   |         Modulo          | `two mod one`                          |
+| `addbe`  |       Plus-equals       | `var addbe one`                        |
+| `subbe`  |      Minus-equals       | `var subbe one`                        |
+|  `Xbe`   |      Times-equals       | `var Xbe one`                          |
+| `divbe`  |      Divide-equals      | `var divbe one`                        |
+| `modbe`  |      Modulo-equals      | `var modbe one`                        |
+|  `inc`   |        Increment        | `var inc`                              |
+|  `dec`   |        Decrement        | `var dec`                              |
+|  `less`  |       Lesser than       | `var less vartwo`                      |
+|  `more`  |        More than        | `var more vartwo`                      |
+|   `is`   |        Equal to         | `var is vartwo`                        |
+| `lessis` | Lesser than or equal to | `var lessis vartwo`                    |
+| `moreis` |  More than or equal to  | `var moreis vartwo`                    |
+|  `not`   |       Logical NOT       | `not Cvar is vartwoD`                  |
+|  `and`   |       Logical AND       | `var is vartwo and vartwo is varthree` |
+|   `or`   |       Logical OR        | `var is vartwo or vartwo is varthree`  |
 
 ## Conditionals
 
@@ -146,11 +146,11 @@ J
 
 Alpha supports for, foreach, and while loops.
 
-| Behavior |                Example                    |
-|:--------:|:------------------------------------------|
-| For loop | `for Clet i be one O i less five O i incD`|
-| For-each | `for Cvar in arrD`                        |
-| While    | `while Cvar lessis vartwoD`               |
+| Behavior | Example                                    |
+|:--------:|:-------------------------------------------|
+| For loop | `for Clet i be one O i less five O i incD` |
+| For-each | `for Cvar in arrD`                         |
+|  While   | `while Cvar lessis vartwoD`                |
 
 ## Arrays and Lists 
 

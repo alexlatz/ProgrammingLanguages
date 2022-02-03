@@ -1,1 +1,61 @@
-program ::= statementList*
+// Alex Latz https://github.com/AlexLatz/ProgrammingLanguages
+program ::= statementList?
+statementList ::= statement+
+//I would add comments in here but they dont work well in BNF (just because they can be anywhere in a line or multiline)
+statement ::= (variableInit | assignment | fxnDeclaration | fxnCall | conditional | loop | returnStatement) lineEnd
+
+primary ::= number | BOOL | STRING | CHAR | collection | collectionGet | parenthesizedExpression
+expression ::= primary | binaryExpression | unaryExpression
+parenthesizedExpression ::= "C" expression "D"
+block ::= "L" statementList? "J"
+parameters ::= parameter?
+parameter ::= primary parameter?
+lineEnd ::= "O" | "\n"
+
+number ::= digit decimal?
+decimal ::= "point" onesDigit+
+//max C++ double size: roughly ten undecillion
+digit ::= biggerDigits* threeDigitGroup
+biggerDigits ::= threeDigitGroup digitName
+digitName ::= "thousand" | "million" | "billion" | "trillion" | "quadrillion" | "quintillion"
+    | "sextillion" | "septillion" | "octillion" | "nonillion" | "decillion" | "undecillion"
+threeDigitGroup ::= hundredsDigit | tensDigit | onesDigit
+hundredsDigit ::= onesDigit "hundred" tensDigit? onesDigit?
+tensDigit ::= tensDigitName onesDigit?
+tensDigitName ::= "ten" | "eleven" | "twelve" | "thirteen" | "fourteen" | "fifteen" | "sixteen" | "seventeen"
+    | "eighteen" | "nineteen" | "twenty" | "thirty" | "forty" | "fifty" | "sixty" | "seventy" | "eighty" | "ninety"
+onesDigit ::= "zero" | "one" | "two" | "three" | "four" | "five" | "six" | "seven" | "eight" | "nine"
+
+binaryExpression ::= primary binaryOperator primary
+unaryExpression ::= primary unaryOperator
+binaryOperator ::= "be" | "add" | "sub" | "X" | "div" | "mod" | "addbe" | "subbe" | "Xbe" | "divbe" | "modbe" | condition
+unaryOperator ::= "inc" | "dec"
+
+condition ::= booleanExpression
+booleanExpression ::= booleanOperand | booleanBinaryExp | booleanUnaryExp
+booleanOperand ::= comparison | BOOL | parenthesizedBoolean
+parenthesizedBoolean ::= "C" booleanExpression "D"
+booleanBinaryExp ::= booleanOperand booleanBinaryOperator booleanOperand
+booleanBinaryOperator ::= "and" | "or"
+booleanUnaryExp ::= "not" booleanOperand
+
+comparison ::= primary comparisonOperator primary
+comparisonOperator ::= "less" | "more" | "is" | "lessis" | "moreis"
+
+variableInit ::= "let" assignment | "let" IDENTIFIER | collectionInit
+assignment ::= IDENTIFIER "be" expression
+fxnDeclaration ::= "fxn" IDENTIFIER "C" parameters "D" block
+fxnCall ::= IDENTIFIER "C" parameters "D"
+conditional ::= conditionalOperator "C" condition "D" block
+loop ::= forLoop | forEachLoop | whileLoop
+returnStatement ::= "rtrn" primary
+
+conditionalOperator ::= "if" | "elif" | "else"
+
+forLoop ::= "for" "C" variableInit "O" condition "O" expression "D" block
+forEachLoop ::= "for" "C" variableInit "in" collection "D" block
+whileLoop ::= "while" "C" condition "D" block
+
+collection ::= ARRAY | LIST
+collectionInit ::= "let" IDENTIFIER "V" number? "A"
+collectionGet ::= IDENTIFIER "V" number "A"
