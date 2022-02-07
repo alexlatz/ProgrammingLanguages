@@ -8,9 +8,7 @@ statementList ::= statement+
 statement ::= (variableInit | assignment | fxnDeclaration | fxnCall | conditional | loop | returnStatement) lineEnd
 
 //Language Building Blocks
-//using COLLECTION as terminal to reference a pointer to a list or array of objects
-// (this doesn't make sense to define with grammar as they wouldn't be written as a literal list of words)
-primary ::= number | boolean | STRING | CHAR | COLLECTION | collectionGet | parenthesizedExpression
+primary ::= number | boolean | STRING | CHAR | collectionGet | parenthesizedExpression
 
 expression ::= primary | binaryExpression | unaryExpression
 
@@ -111,7 +109,7 @@ conditionalOperator ::= "if" | "elif" | "else"
 //Types of Loops
 forLoop ::= "for" "C" variableInit "O" condition "O" expression "D" block
 
-forEachLoop ::= "for" "C" variableInit "in" COLLECTION "D" block
+forEachLoop ::= "for" "C" variableInit "in" IDENTIFIER "D" block
 
 whileLoop ::= "while" "C" condition "D" block
 
