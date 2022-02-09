@@ -76,13 +76,23 @@ All variables are declared with the keyword `let` and optionally initialized wit
 
 ```
 let tmp be true  
-let name be five
+let name be twenty five point one
 let var
 ```
+
+Negative numbers are declared with the `sub` prefix.
+ex. `sub one != 2`
 
 ### Modification
 
 Variables can be modified later through the `be` keyword, although they must remain typed.
+
+### Strings
+
+Strings in Alpha are declared between `dC` and `Db` symbols, and must be separated from their endings by a space character.
+Additional spaces will be incorporated into the string.
+
+ex. `let name be dC Hello, World! Db`
 
 ## Functions
 
@@ -95,8 +105,6 @@ J
 
 squareCfiveD
 ```
-
-Alpha intentionally does not support functional programming (due to a high number of symbols used in functional languages).
 
 ## Operators
 
