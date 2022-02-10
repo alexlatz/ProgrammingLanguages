@@ -11,6 +11,12 @@
 
 class Lexer {
     ifstream* file;
+    int currentPos;
+    int startLexeme;
+    int lineNum;
+    void skipWhitespace();
+    static map<string, TokenType> keywords;
+    static const map<string, TokenType> getKeywords();
 public:
     Lexer(ifstream* file);
     vector<Lexeme> lex();

@@ -10,19 +10,19 @@ Lexeme::Lexeme(TokenType type, int lineNum) {
 }
 
 Lexeme::Lexeme(TokenType type, int lineNum, double value) : Lexeme(type, lineNum) {
-    this->doubleVal = value;
+    this->value = value;
 }
 
-Lexeme::Lexeme(TokenType type, int lineNum, string& value) : Lexeme(type, lineNum) {
-    this->stringVal = value;
+Lexeme::Lexeme(TokenType type, int lineNum, string value) : Lexeme(type, lineNum) {
+    this->value = value;
 }
 
 Lexeme::Lexeme(TokenType type, int lineNum, char value) : Lexeme(type, lineNum) {
-    this->charVal = value;
+    this->value = value;
 }
 
 Lexeme::Lexeme(TokenType type, int lineNum, bool value) : Lexeme(type, lineNum) {
-    this->boolVal = value;
+    this->value = value;
 }
 
 void Lexeme::setType(TokenType type) {
@@ -41,20 +41,7 @@ int Lexeme::getLineNum() {
     return this->lineNum;
 }
 
-double Lexeme::getDoubleValue() {
-    return this->doubleVal;
+boost::variant<double, string, char, bool> Lexeme::getValue() {
+    return this->value;
 }
-
-string Lexeme::getStringValue() {
-    return this->stringVal;
-}
-
-char Lexeme::getCharValue() {
-    return this->charVal;
-}
-
-bool Lexeme::getBoolValue() {
-    return this->boolVal;
-}
-
 

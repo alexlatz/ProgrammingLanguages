@@ -3,4 +3,19 @@ project(ProgrammingLanguages)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(LexicalAnalyzer Alpha/LexicalAnalysis/src/Lexer.cpp Alpha/LexicalAnalysis/includes/Lexer.h Alpha/LexicalAnalysis/src/Lexeme.cpp Alpha/LexicalAnalysis/includes/Lexeme.h Alpha/LexicalAnalysis/src/Alpha.cpp Alpha/LexicalAnalysis/includes/Alpha.h)
+FIND_PACKAGE( Boost 1.7 COMPONENTS program_options REQUIRED )
+INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
+
+SET(TARGET_H
+        Alpha/LexicalAnalysis/includes/Alpha.h
+        Alpha/LexicalAnalysis/includes/Lexeme.h
+        Alpha/LexicalAnalysis/includes/Lexer.h
+        )
+# Local source files here
+SET(TARGET_SRC
+        Alpha/LexicalAnalysis/src/Alpha.cpp
+        Alpha/LexicalAnalysis/src/Lexeme.cpp
+        Alpha/LexicalAnalysis/src/Lexer.cpp
+        )
+
+add_executable(LexicalAnalyzer ${TARGET_H} ${TARGET_SRC})
