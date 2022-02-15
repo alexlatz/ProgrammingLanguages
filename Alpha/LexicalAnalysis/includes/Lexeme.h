@@ -18,7 +18,7 @@ enum TokenType {
     //symbols
     OPEN_PAREN, CLOSE_PAREN, OPEN_BLOCK, CLOSE_BLOCK,
     LINE_END, COMMENT_LINEEND, OPEN_SQ_BRACKET, CLOSE_SQ_BRACKET,
-    STR_OPEN, STR_CLOSE,
+    STR_OPEN, STR_CLOSE, CHAR_OPEN, CHAR_CLOSE,
     //keywords
     RETURN, IF, ELIF, ELSE, POINT, LET, FXN, FOR, WHILE, IN,
     //operators
@@ -28,7 +28,9 @@ enum TokenType {
     //unary
     INC, DEC,
     //boolean operators
-    AND, OR, NOT, LESS, MORE, IS, LESSIS, MOREIS
+    AND, OR, NOT, LESS, MORE, IS, LESSIS, MOREIS,
+    //file end (can't name it EOF bc that's a defined constant in C++
+    ENDFILE
 };
 
 class Lexeme {

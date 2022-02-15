@@ -14,12 +14,18 @@ class Lexer {
     int currentPos;
     int startLexeme;
     int lineNum;
-    void skipWhitespace();
+    Lexeme* advance(char c);
+    Lexeme* getNextLexeme();
     static map<string, TokenType> keywords;
-    static const map<string, TokenType> getKeywords();
+    static map<string, double> digits;
+    static map<string, double> getDigits();
+    static map<string, TokenType> getKeywords();
+    Lexeme* lexMultiChar(char c);
+    Lexeme* lexQuotes();
+    Lexeme* lexNumber();
 public:
     Lexer(ifstream* file);
-    vector<Lexeme> lex();
+    vector<Lexeme*> lex();
 };
 
 
