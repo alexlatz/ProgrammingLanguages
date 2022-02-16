@@ -11,18 +11,15 @@
 
 class Lexer {
     ifstream* file;
-    int currentPos;
-    int startLexeme;
     int lineNum;
     Lexeme* advance(char c);
     Lexeme* getNextLexeme();
     static map<string, TokenType> keywords;
     static map<string, double> digits;
-    static map<string, double> getDigits();
-    static map<string, TokenType> getKeywords();
     Lexeme* lexMultiChar(char c);
-    Lexeme* lexQuotes();
-    Lexeme* lexNumber();
+    Lexeme* lexQuotes(bool str);
+    Lexeme* lexNumber(string& firstWord);
+    double parseHundredsGroup(vector<string>::reverse_iterator begin, vector<string>::reverse_iterator end);
 public:
     Lexer(ifstream* file);
     vector<Lexeme*> lex();

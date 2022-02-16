@@ -4,124 +4,122 @@
 
 #include "../includes/Lexer.h"
 
+//LEXER CURRENT LIMITATIONS:
+//Line number count is the number of parsed code lines (so not the count of the actual file)
 Lexer::Lexer(ifstream* file) {
     this->file = file;
     this->lineNum = 1;
-    getDigits();
-    getKeywords();
 }
 
 vector<Lexeme*> Lexer::lex() {
-    char test;
-    *file >> test;
-    return vector<Lexeme*>();
+    vector<Lexeme*> vec;
+    while (!file->eof() && !file->fail()) {
+        Lexeme* lexeme = getNextLexeme();
+        if (lexeme != nullptr) vec.push_back(lexeme);
+    }
+    return vec;
 }
 
-map<string, TokenType> Lexer::getKeywords() {
-    if (Lexer::keywords.empty()) {
-        Lexer::keywords.insert({"C", TokenType::OPEN_PAREN});
-        Lexer::keywords.insert({"D", TokenType::CLOSE_PAREN});
-        Lexer::keywords.insert({"L", TokenType::OPEN_BLOCK});
-        Lexer::keywords.insert({"J", TokenType::CLOSE_BLOCK});
-        Lexer::keywords.insert({"\n", TokenType::LINE_END});
-        Lexer::keywords.insert({"II", TokenType::COMMENT_LINEEND});
-        Lexer::keywords.insert({"V", TokenType::OPEN_SQ_BRACKET});
-        Lexer::keywords.insert({"A", TokenType::CLOSE_SQ_BRACKET});
-        Lexer::keywords.insert({"dB", TokenType::STR_OPEN});
-        Lexer::keywords.insert({"Db", TokenType::STR_CLOSE});
-        Lexer::keywords.insert({"bD", TokenType::CHAR_OPEN});
-        Lexer::keywords.insert({"Bd", TokenType::CHAR_CLOSE});
-        Lexer::keywords.insert({"rtrn", TokenType::RETURN});
-        Lexer::keywords.insert({"if", TokenType::IF});
-        Lexer::keywords.insert({"elif", TokenType::ELIF});
-        Lexer::keywords.insert({"else", TokenType::ELSE});
-        Lexer::keywords.insert({"point", TokenType::POINT});
-        Lexer::keywords.insert({"let", TokenType::LET});
-        Lexer::keywords.insert({"fxn", TokenType::FXN});
-        Lexer::keywords.insert({"for", TokenType::FOR});
-        Lexer::keywords.insert({"while", TokenType::WHILE});
-        Lexer::keywords.insert({"in", TokenType::IN});
-        Lexer::keywords.insert({"be", TokenType::BE});
-        Lexer::keywords.insert({"add", TokenType::ADD});
-        Lexer::keywords.insert({"sub", TokenType::SUB});
-        Lexer::keywords.insert({"X", TokenType::X});
-        Lexer::keywords.insert({"div", TokenType::DIV});
-        Lexer::keywords.insert({"mod", TokenType::MOD});
-        Lexer::keywords.insert({"addbe", TokenType::ADDBE});
-        Lexer::keywords.insert({"subbe", TokenType::SUBBE});
-        Lexer::keywords.insert({"Xbe", TokenType::XBE});
-        Lexer::keywords.insert({"divbe", TokenType::DIVBE});
-        Lexer::keywords.insert({"modbe", TokenType::MODBE});
-        Lexer::keywords.insert({"inc", TokenType::INC});
-        Lexer::keywords.insert({"dec", TokenType::DEC});
-        Lexer::keywords.insert({"and", TokenType::AND});
-        Lexer::keywords.insert({"or", TokenType::OR});
-        Lexer::keywords.insert({"not", TokenType::NOT});
-        Lexer::keywords.insert({"less", TokenType::LESS});
-        Lexer::keywords.insert({"more", TokenType::MORE});
-        Lexer::keywords.insert({"is", TokenType::IS});
-        Lexer::keywords.insert({"lessis", TokenType::LESSIS});
-        Lexer::keywords.insert({"moreis", TokenType::MOREIS});
-    }
-    return Lexer::keywords;
-}
+map<string, TokenType> Lexer::keywords {
+    {"C", TokenType::OPEN_PAREN},
+    {"D", TokenType::CLOSE_PAREN},
+    {"L", TokenType::OPEN_BLOCK},
+    {"J", TokenType::CLOSE_BLOCK},
+    {"O", TokenType::LINE_END},
+    {"II", TokenType::COMMENT_LINEEND},
+    {"V", TokenType::OPEN_SQ_BRACKET},
+    {"A", TokenType::CLOSE_SQ_BRACKET},
+    {"dB", TokenType::STR_OPEN},
+    {"Db", TokenType::STR_CLOSE},
+    {"dC", TokenType::CHAR_OPEN},
+    {"Dc", TokenType::CHAR_CLOSE},
+    {"rtrn", TokenType::RETURN},
+    {"if", TokenType::IF},
+    {"elif", TokenType::ELIF},
+    {"else", TokenType::ELSE},
+    {"point", TokenType::POINT},
+    {"let", TokenType::LET},
+    {"fxn", TokenType::FXN},
+    {"for", TokenType::FOR},
+    {"while", TokenType::WHILE},
+    {"in", TokenType::IN},
+    {"be", TokenType::BE},
+    {"add", TokenType::ADD},
+    {"sub", TokenType::SUB},
+    {"X", TokenType::X},
+    {"div", TokenType::DIV},
+    {"mod", TokenType::MOD},
+    {"addbe", TokenType::ADDBE},
+    {"subbe", TokenType::SUBBE},
+    {"Xbe", TokenType::XBE},
+    {"divbe", TokenType::DIVBE},
+    {"modbe", TokenType::MODBE},
+    {"inc", TokenType::INC},
+    {"dec", TokenType::DEC},
+    {"and", TokenType::AND},
+    {"or", TokenType::OR},
+    {"not", TokenType::NOT},
+    {"less", TokenType::LESS},
+    {"more", TokenType::MORE},
+    {"is", TokenType::IS},
+    {"lessis", TokenType::LESSIS},
+    {"moreis", TokenType::MOREIS},
+};
 
-map<string, double> Lexer::getDigits() {
-    if (Lexer::digits.empty()) {
-        Lexer::digits.insert({"zero", 0});
-        Lexer::digits.insert({"one", 1});
-        Lexer::digits.insert({"two", 2});
-        Lexer::digits.insert({"three", 3});
-        Lexer::digits.insert({"four", 4});
-        Lexer::digits.insert({"five", 5});
-        Lexer::digits.insert({"six", 6});
-        Lexer::digits.insert({"seven", 7});
-        Lexer::digits.insert({"eight", 8});
-        Lexer::digits.insert({"nine", 9});
-        Lexer::digits.insert({"ten", 10});
-        Lexer::digits.insert({"eleven", 11});
-        Lexer::digits.insert({"twelve", 12});
-        Lexer::digits.insert({"thirteen", 13});
-        Lexer::digits.insert({"fourteen", 14});
-        Lexer::digits.insert({"fifteen", 15});
-        Lexer::digits.insert({"sixteen", 16});
-        Lexer::digits.insert({"seventeen", 17});
-        Lexer::digits.insert({"eighteen", 18});
-        Lexer::digits.insert({"nineteen", 19});
-        Lexer::digits.insert({"twenty", 20});
-        Lexer::digits.insert({"thirty", 30});
-        Lexer::digits.insert({"forty", 40});
-        Lexer::digits.insert({"fifty", 50});
-        Lexer::digits.insert({"sixty", 60});
-        Lexer::digits.insert({"seventy", 70});
-        Lexer::digits.insert({"eighty", 80});
-        Lexer::digits.insert({"ninety", 90});
-        Lexer::digits.insert({"hundred", 100});
-        Lexer::digits.insert({"thousand", 1000});
-        Lexer::digits.insert({"million", 1000000});
-        Lexer::digits.insert({"billion", 1000000000});
-        Lexer::digits.insert({"trillion", 1000000000000});
-        Lexer::digits.insert({"quadrillion", 1000000000000000});
-        Lexer::digits.insert({"quintillion", 1000000000000000000});
-        Lexer::digits.insert({"sextillion", 1000000000000000000000.0});
-        Lexer::digits.insert({"septillion", 1000000000000000000000000.0});
-        Lexer::digits.insert({"octillion", 1000000000000000000000000000.0});
-        Lexer::digits.insert({"nonillion", 1000000000000000000000000000000.0});
-        Lexer::digits.insert({"decillion", 1000000000000000000000000000000000.0});
-        Lexer::digits.insert({"undecillion", 1000000000000000000000000000000000000.0});
-    }
-    return Lexer::digits;
-}
+map<string, double> Lexer::digits {
+    {"zero", 0},
+    {"one", 1},
+    {"two", 2},
+    {"three", 3},
+    {"four", 4},
+    {"five", 5},
+    {"six", 6},
+    {"seven", 7},
+    {"eight", 8},
+    {"nine", 9},
+    {"ten", 10},
+    {"eleven", 11},
+    {"twelve", 12},
+    {"thirteen", 13},
+    {"fourteen", 14},
+    {"fifteen", 15},
+    {"sixteen", 16},
+    {"seventeen", 17},
+    {"eighteen", 18},
+    {"nineteen", 19},
+    {"twenty", 20},
+    {"thirty", 30},
+    {"forty", 40},
+    {"fifty", 50},
+    {"sixty", 60},
+    {"seventy", 70},
+    {"eighty", 80},
+    {"ninety", 90},
+    {"hundred", 100},
+    {"thousand", 1000},
+    {"million", 1000000},
+    {"billion", 1000000000},
+    {"trillion", 1000000000000},
+    {"quadrillion", 1000000000000000},
+    {"quintillion", 1000000000000000000},
+    {"sextillion", 1000000000000000000000.0},
+    {"septillion", 1000000000000000000000000.0},
+    {"octillion", 1000000000000000000000000000.0},
+    {"nonillion", 1000000000000000000000000000000.0},
+    {"decillion", 1000000000000000000000000000000000.0},
+    {"undecillion", 1000000000000000000000000000000000000.0},
+};
 
 Lexeme* Lexer::getNextLexeme() {
     char c;
-    *file >> c;
+    file->get(c);
     switch (c) {
         case 'O':
         case '\n':
             return advance(c);
         case '\t':
         case ' ':
+        case '\0':
             return nullptr;
         case 'C':
             return new Lexeme(TokenType::OPEN_PAREN, lineNum);
@@ -143,38 +141,115 @@ Lexeme* Lexer::getNextLexeme() {
 
 Lexeme* Lexer::lexMultiChar(char c) {
     string word;
-    while (isalpha(c)) {
+    while (isalpha(c) && !file->eof()) {
         word.push_back(c);
-        *file >> c;
+        file->get(c);
     }
     if (Lexer::keywords.count(word) > 0) {
         TokenType type = Lexer::keywords.at(word);
-        if ((type == TokenType::STR_OPEN || type == TokenType::CHAR_OPEN) && c == ' ') return lexQuotes();
+        if ((type == TokenType::STR_OPEN || type == TokenType::CHAR_OPEN) && c == ' ') return lexQuotes(type == TokenType::STR_OPEN);
         file->putback(c);
         return new Lexeme(type, lineNum);
     } else {
-        if (Lexer::digits.count(word) > 0) return lexNumber();
+        if (c != ' ') file->putback(c);
+        if (Lexer::digits.count(word) > 0) return lexNumber(word);
         else if (word == "true" || word == "false") return new Lexeme(TokenType::BOOL, lineNum, word == "true");
         else return new Lexeme(TokenType::IDENTIFIER, lineNum, word);
     }
 }
 
+
 Lexeme* Lexer::advance(char c) {
     if (c == 'O') return new Lexeme(TokenType::LINE_END, lineNum);
     else if (c == '\n') {
         char peek;
-        *file >> peek;
-        lineNum++;
-        if (peek == '\t') {
+        file->get(peek);
+        if (peek == '\t' || peek == ' ') {
             return nullptr;
         } else {
             file->putback(peek);
-            return new Lexeme(TokenType::LINE_END, lineNum);
+            return new Lexeme(TokenType::LINE_END, lineNum++);
         }
     }
     return nullptr;
 }
 
+Lexeme* Lexer::lexQuotes(bool str) {
+    string quote;
+    while (!file->eof() && (quote.length() < 3 || (quote.substr(quote.length()-3, 3) != " Db")) && (quote.length() < 3 || quote.substr(quote.length()-3, 3) != " Dc")) {
+        char c;
+        file->get(c);
+        quote.push_back(c);
+    }
+    if (str) {
+        return new Lexeme(TokenType::STRING, lineNum, quote.substr(0, quote.length()-3));
+    } else {
+        if (quote.length() > 4) return nullptr; //TODO: add char too big error
+        else return new Lexeme(TokenType::CHAR, lineNum, quote[0]);
+    }
+}
 
+Lexeme* Lexer::lexNumber(string& firstWord) {
+    vector<string> words;
+    words.push_back(firstWord);
+    string nextWord = "";
+    vector<char> fullInput;
+    bool first = true;
+    while ((first || Lexer::digits.count(nextWord) > 0) && !file->eof()) {
+        if (first) first = false;
+        nextWord.clear();
+        char c;
+        file->get(c);
+        while (isalpha(c) && !file->eof()) {
+            nextWord.push_back(c);
+            fullInput.push_back(c);
+            file->get(c);
+        }
+        if (!isalpha(c)) fullInput.push_back(c);
+        if (!nextWord.empty() && Lexer::digits.count(nextWord) > 0) {
+            words.push_back(nextWord);
+            fullInput.clear();
+            fullInput.push_back(c);
+        }
+    }
+    if (Lexer::digits.count(nextWord) == 0) {
+        for (char c : fullInput) {
+            if (!file->fail()) file->putback(c);
+            else file->clear();
+        }
+    }
+    //two hundred eleven thousand nine hundred fifty five
+    //211955
+    double value = 0, storeNum = 1;
+    auto begin = words.rbegin();
+    for (auto it = words.rbegin(); it != words.rend(); it++) {
+        if (Lexer::digits.at(*it) > 100) {
+            value += storeNum * parseHundredsGroup(begin, it);
+            storeNum = Lexer::digits.at(*it);
+            begin = it + 1;
+        }
+    }
+    if (begin != words.rend()) value += storeNum * parseHundredsGroup(begin, words.rend());
+    return new Lexeme(TokenType::NUMBER, lineNum, value);
+}
+
+double Lexer::parseHundredsGroup(vector<string>::reverse_iterator begin, vector<string>::reverse_iterator end) {
+    bool firstGroup = false;
+    double storeNum, finalVal = 0;
+    for (auto it(begin); it != end; it++) {
+        double value = Lexer::digits.at(*it);
+        if (value < 100 && !firstGroup) {
+            //teen numbers can't be followed
+            if (value > 9 && value < 20 && it != begin) cout << "Error: Invalid Number on line" << lineNum << endl;
+            finalVal += value;
+        } else if (value < 10 && firstGroup) {
+            finalVal += (storeNum * value);
+        } else if (value == 100) {
+            if (!firstGroup) firstGroup = true;
+            storeNum = value;
+        } else cout << "Error: Invalid Number on line " << lineNum << endl;
+    }
+    return finalVal;
+}
 
 

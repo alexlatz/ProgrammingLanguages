@@ -61,7 +61,7 @@ onesDigit ::= "zero" | "one" | "two" | "three"
 //Other Type Definitions
 boolean ::= "true" | "false"
 
-string ::= "dC" " " *  " " "Db"
+string ::= "dB" " " *  " " "Db"
 
 //Granular Expressions and Operators
 binaryExpression ::= primary binaryOperator primary
