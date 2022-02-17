@@ -4,8 +4,6 @@
 
 #include "../includes/Lexer.h"
 
-//LEXER CURRENT LIMITATIONS:
-//Line number count is the number of parsed code lines (so not the count of the actual file)
 Lexer::Lexer(ifstream* file) {
     this->file = file;
     this->lineNum = 1;
@@ -17,6 +15,7 @@ vector<Lexeme*> Lexer::lex() {
         Lexeme* lexeme = getNextLexeme();
         if (lexeme != nullptr) vec.push_back(lexeme);
     }
+    vec.push_back(new Lexeme(TokenType::ENDFILE, lineNum));
     return vec;
 }
 
@@ -148,10 +147,10 @@ Lexeme* Lexer::lexMultiChar(char c) {
     if (Lexer::keywords.count(word) > 0) {
         TokenType type = Lexer::keywords.at(word);
         if ((type == TokenType::STR_OPEN || type == TokenType::CHAR_OPEN) && c == ' ') return lexQuotes(type == TokenType::STR_OPEN);
-        file->putback(c);
+        file->unget();
         return new Lexeme(type, lineNum);
     } else {
-        if (c != ' ') file->putback(c);
+        if (c != ' ') file->unget();
         if (Lexer::digits.count(word) > 0) return lexNumber(word);
         else if (word == "true" || word == "false") return new Lexeme(TokenType::BOOL, lineNum, word == "true");
         else return new Lexeme(TokenType::IDENTIFIER, lineNum, word);
@@ -165,9 +164,10 @@ Lexeme* Lexer::advance(char c) {
         char peek;
         file->get(peek);
         if (peek == '\t' || peek == ' ') {
+            lineNum++;
             return nullptr;
         } else {
-            file->putback(peek);
+            file->unget();
             return new Lexeme(TokenType::LINE_END, lineNum++);
         }
     }
@@ -184,52 +184,60 @@ Lexeme* Lexer::lexQuotes(bool str) {
     if (str) {
         return new Lexeme(TokenType::STRING, lineNum, quote.substr(0, quote.length()-3));
     } else {
-        if (quote.length() > 4) return nullptr; //TODO: add char too big error
+        if (quote.length() > 4) {
+            Alpha::report(lineNum, "CHAR", "Invalid char: exceeds one character");
+            return nullptr;
+        }
         else return new Lexeme(TokenType::CHAR, lineNum, quote[0]);
     }
 }
 
 Lexeme* Lexer::lexNumber(string& firstWord) {
     vector<string> words;
+    vector<string> decimals;
     words.push_back(firstWord);
-    string nextWord = "";
-    vector<char> fullInput;
+    string nextWord;
+    int fullInput = 0;
     bool first = true;
-    while ((first || Lexer::digits.count(nextWord) > 0) && !file->eof()) {
+    bool pointMode = false;
+    while ((first || (Lexer::digits.count(nextWord) > 0) || nextWord == "point") && !file->eof()) {
         if (first) first = false;
         nextWord.clear();
         char c;
         file->get(c);
         while (isalpha(c) && !file->eof()) {
             nextWord.push_back(c);
-            fullInput.push_back(c);
+            fullInput++;
             file->get(c);
         }
-        if (!isalpha(c)) fullInput.push_back(c);
-        if (!nextWord.empty() && Lexer::digits.count(nextWord) > 0) {
-            words.push_back(nextWord);
-            fullInput.clear();
-            fullInput.push_back(c);
+        if (!isalpha(c)) fullInput++;
+        if (!nextWord.empty() && (Lexer::digits.count(nextWord) > 0 || nextWord == "point")) {
+            if (nextWord != "point" && !pointMode) words.push_back(nextWord);
+            else if (!pointMode) pointMode = true;
+            else decimals.push_back(nextWord);
+            fullInput = 1;
         }
     }
     if (Lexer::digits.count(nextWord) == 0) {
-        for (char c : fullInput) {
-            if (!file->fail()) file->putback(c);
-            else file->clear();
+        for (int i = 0; i < fullInput; i++) {
+            file->unget();
         }
     }
-    //two hundred eleven thousand nine hundred fifty five
-    //211955
     double value = 0, storeNum = 1;
     auto begin = words.rbegin();
     for (auto it = words.rbegin(); it != words.rend(); it++) {
         if (Lexer::digits.at(*it) > 100) {
             value += storeNum * parseHundredsGroup(begin, it);
-            storeNum = Lexer::digits.at(*it);
+            if (storeNum < Lexer::digits.at(*it)) storeNum = Lexer::digits.at(*it);
+            else Alpha::report(lineNum, "NUMBER", "Invalid order of places (ex. millions)");
             begin = it + 1;
         }
     }
     if (begin != words.rend()) value += storeNum * parseHundredsGroup(begin, words.rend());
+    for (int i = 1; i <= decimals.size(); i++) {
+        if (Lexer::digits.count(decimals[i-1]) == 0 || Lexer::digits.at(decimals[i-1]) > 9) Alpha::report(lineNum, "NUMBER", "Invalid decimal");
+        else  value += (Lexer::digits.at(decimals[i-1]) / (double) pow(10.0, (double)i));
+    }
     return new Lexeme(TokenType::NUMBER, lineNum, value);
 }
 
@@ -239,15 +247,14 @@ double Lexer::parseHundredsGroup(vector<string>::reverse_iterator begin, vector<
     for (auto it(begin); it != end; it++) {
         double value = Lexer::digits.at(*it);
         if (value < 100 && !firstGroup) {
-            //teen numbers can't be followed
-            if (value > 9 && value < 20 && it != begin) cout << "Error: Invalid Number on line" << lineNum << endl;
-            finalVal += value;
+            if (finalVal > 9 && finalVal < 20 && it != begin) Alpha::report(lineNum, "NUMBER", "Invalid: illegal teen-number)");
+            else finalVal += value;
         } else if (value < 10 && firstGroup) {
             finalVal += (storeNum * value);
         } else if (value == 100) {
             if (!firstGroup) firstGroup = true;
             storeNum = value;
-        } else cout << "Error: Invalid Number on line " << lineNum << endl;
+        } else Alpha::report(lineNum, "NUMBER", "Invalid: general number parsing error");
     }
     return finalVal;
 }

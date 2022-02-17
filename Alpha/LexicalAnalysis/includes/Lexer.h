@@ -6,6 +6,7 @@
 #define PROGRAMMINGLANGUAGES_LEXER_H
 
 #include "Lexeme.h"
+#include "Alpha.h"
 #include <vector>
 #include <fstream>
 

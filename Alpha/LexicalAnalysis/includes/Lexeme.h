@@ -12,6 +12,16 @@
 #include <boost/describe.hpp>
 
 using namespace std;
+static vector<string> tokenName = {"NUMBER", "BOOL", "STRING", "CHAR", "COLLECTION", "IDENTIFIER",
+                                   "OPEN_PAREN", "CLOSE_PAREN", "OPEN_BLOCK", "CLOSE_BLOCK",
+                                   "LINE_END", "COMMENT_LINEEND", "OPEN_SQ_BRACKET", "CLOSE_SQ_BRACKET",
+                                   "STR_OPEN", "STR_CLOSE", "CHAR_OPEN", "CHAR_CLOSE",
+                                   "RETURN", "IF", "ELIF", "ELSE", "POINT", "LET", "FXN", "FOR", "WHILE", "IN",
+                                   "BE", "ADD", "SUB", "X", "DIV",
+                                   "MOD", "ADDBE", "SUBBE", "XBE", "DIVBE", "MODBE",
+                                   "INC", "DEC",
+                                   "AND", "OR", "NOT", "LESS", "MORE", "IS", "LESSIS", "MOREIS",
+                                   "ENDFILE"};
 enum TokenType {
     //variable types
     NUMBER, BOOL, STRING, CHAR, COLLECTION, IDENTIFIER,
@@ -37,12 +47,11 @@ class Lexeme {
     TokenType type;
     int lineNum;
     boost::variant<double, string, char, bool> value;
-    //C++ doesn't really have a toString alternative, so I overloaded the << operator to add something similar
-    //Also there's no real way to do enum toString, so I'm leaving it like this for now
     friend ostream& operator<<(ostream& stream, const Lexeme& lexeme) {
-        stream << "(" << "Type #:" << lexeme.type << ", " << lexeme.lineNum << ", ";
+        stream << "(" << "Type: " << tokenName.at(lexeme.type) << ", " << lexeme.lineNum << ", ";
         if (lexeme.value.type() == typeid(std::string)) stream << boost::get<string>(lexeme.value);
         else if (lexeme.value.type() == typeid(bool)) stream << (boost::get<bool>(lexeme.value) ? "true" : "false");
+        else if (lexeme.value.type() == typeid(double)) stream << ((boost::get<double>(lexeme.value) == 0) ? "\"\"" : to_string(boost::get<double>(lexeme.value)));
         else stream << lexeme.value;
         return stream << ")\n";
     };

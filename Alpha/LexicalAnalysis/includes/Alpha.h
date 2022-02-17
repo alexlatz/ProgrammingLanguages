@@ -7,7 +7,13 @@
 #include "Lexer.h"
 #include <fstream>
 
-static void runFile(const char* path);
-static void run(ifstream* file);
+class Alpha {
+    static void run(ifstream* file);
+    static bool hadSyntaxError;
+    public:
+        static void runFile(const char* path);
+        static void report(int lineNumber, string where, string message);
+        static void error(Lexeme lexeme, string message);
+};
 
 #endif //PROGRAMMINGLANGUAGES_ALPHA_H
