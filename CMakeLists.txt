@@ -7,15 +7,15 @@ FIND_PACKAGE( Boost 1.7 COMPONENTS program_options REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 SET(TARGET_H
-        Alpha/LexicalAnalysis/includes/Alpha.h
-        Alpha/LexicalAnalysis/includes/Lexeme.h
-        Alpha/LexicalAnalysis/includes/Lexer.h
-        )
+        Alpha/includes/Alpha.h
+        Alpha/includes/LexicalAnalysis/Lexeme.h
+        Alpha/includes/LexicalAnalysis/Lexer.h
+        Alpha/includes/Recognizing/Recognizer.h)
 # Local source files here
 SET(TARGET_SRC
-        Alpha/LexicalAnalysis/src/Alpha.cpp
-        Alpha/LexicalAnalysis/src/Lexeme.cpp
-        Alpha/LexicalAnalysis/src/Lexer.cpp
-        )
+        Alpha/src/Alpha.cpp
+        Alpha/src/LexicalAnalysis/Lexeme.cpp
+        Alpha/src/LexicalAnalysis/Lexer.cpp
+        Alpha/src/Recognizing/Recognizer.cpp)
 
-add_executable(LexicalAnalyzer ${TARGET_H} ${TARGET_SRC})
+add_executable(Alpha ${TARGET_H} ${TARGET_SRC})

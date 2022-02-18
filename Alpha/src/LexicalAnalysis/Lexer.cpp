@@ -2,7 +2,7 @@
 // Created by Alex Latz on 2/8/22.
 //
 
-#include "../includes/Lexer.h"
+#include "../../includes/LexicalAnalysis/Lexer.h"
 
 Lexer::Lexer(ifstream* file) {
     this->file = file;
@@ -134,8 +134,9 @@ Lexeme* Lexer::getNextLexeme() {
             return new Lexeme(TokenType::CLOSE_SQ_BRACKET, lineNum);
         case 'X':
             return new Lexeme(TokenType::X, lineNum);
+        default:
+            return lexMultiChar(c);
     }
-    return lexMultiChar(c);
 }
 
 Lexeme* Lexer::lexMultiChar(char c) {
@@ -185,7 +186,7 @@ Lexeme* Lexer::lexQuotes(bool str) {
         return new Lexeme(TokenType::STRING, lineNum, quote.substr(0, quote.length()-3));
     } else {
         if (quote.length() > 4) {
-            Alpha::report(lineNum, "CHAR", "Invalid char: exceeds one character");
+            Alpha::syntaxError(lineNum, "CHAR", "Invalid char: exceeds one character");
             return nullptr;
         }
         else return new Lexeme(TokenType::CHAR, lineNum, quote[0]);
@@ -229,32 +230,32 @@ Lexeme* Lexer::lexNumber(string& firstWord) {
         if (Lexer::digits.at(*it) > 100) {
             value += storeNum * parseHundredsGroup(begin, it);
             if (storeNum < Lexer::digits.at(*it)) storeNum = Lexer::digits.at(*it);
-            else Alpha::report(lineNum, "NUMBER", "Invalid order of places (ex. millions)");
+            else Alpha::syntaxError(lineNum, "NUMBER", "Invalid order of places (ex. millions)");
             begin = it + 1;
         }
     }
     if (begin != words.rend()) value += storeNum * parseHundredsGroup(begin, words.rend());
     for (int i = 1; i <= decimals.size(); i++) {
-        if (Lexer::digits.count(decimals[i-1]) == 0 || Lexer::digits.at(decimals[i-1]) > 9) Alpha::report(lineNum, "NUMBER", "Invalid decimal");
+        if (Lexer::digits.count(decimals[i-1]) == 0 || Lexer::digits.at(decimals[i-1]) > 9) Alpha::syntaxError(lineNum, "NUMBER", "Invalid decimal");
         else  value += (Lexer::digits.at(decimals[i-1]) / (double) pow(10.0, (double)i));
     }
     return new Lexeme(TokenType::NUMBER, lineNum, value);
 }
 
-double Lexer::parseHundredsGroup(vector<string>::reverse_iterator begin, vector<string>::reverse_iterator end) {
+double Lexer::parseHundredsGroup(vector<string>::reverse_iterator begin, vector<string>::reverse_iterator end) const {
     bool firstGroup = false;
     double storeNum, finalVal = 0;
     for (auto it(begin); it != end; it++) {
         double value = Lexer::digits.at(*it);
         if (value < 100 && !firstGroup) {
-            if (finalVal > 9 && finalVal < 20 && it != begin) Alpha::report(lineNum, "NUMBER", "Invalid: illegal teen-number)");
+            if (finalVal > 9 && finalVal < 20 && it != begin) Alpha::syntaxError(lineNum, "NUMBER", "Invalid: illegal teen-number");
             else finalVal += value;
         } else if (value < 10 && firstGroup) {
             finalVal += (storeNum * value);
         } else if (value == 100) {
             if (!firstGroup) firstGroup = true;
             storeNum = value;
-        } else Alpha::report(lineNum, "NUMBER", "Invalid: general number parsing error");
+        } else Alpha::syntaxError(lineNum, "NUMBER", "Invalid: general number parsing error");
     }
     return finalVal;
 }

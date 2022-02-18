@@ -61,6 +61,7 @@ public:
     Lexeme(TokenType type, int lineNum, char value);
     Lexeme(TokenType type, int lineNum, bool value);
     Lexeme(TokenType type, int lineNum);
+    string toString();
     void setType(TokenType type);
     void setLineNum(int lineNum);
     TokenType getType();

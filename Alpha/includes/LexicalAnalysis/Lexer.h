@@ -6,7 +6,7 @@
 #define PROGRAMMINGLANGUAGES_LEXER_H
 
 #include "Lexeme.h"
-#include "Alpha.h"
+#include "../Alpha.h"
 #include <vector>
 #include <fstream>
 
@@ -20,7 +20,7 @@ class Lexer {
     Lexeme* lexMultiChar(char c);
     Lexeme* lexQuotes(bool str);
     Lexeme* lexNumber(string& firstWord);
-    double parseHundredsGroup(vector<string>::reverse_iterator begin, vector<string>::reverse_iterator end);
+    double parseHundredsGroup(vector<string>::reverse_iterator begin, vector<string>::reverse_iterator end) const;
 public:
     Lexer(ifstream* file);
     vector<Lexeme*> lex();
