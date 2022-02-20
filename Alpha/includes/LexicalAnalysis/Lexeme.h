@@ -7,9 +7,9 @@
 #define PROGRAMMINGLANGUAGES_LEXEME_H
 
 #include <iostream>
+#include <vector>
 #include <boost/variant/variant.hpp>
 #include <boost/variant/get.hpp>
-#include <boost/describe.hpp>
 
 using namespace std;
 static vector<string> tokenName = {"NUMBER", "BOOL", "STRING", "CHAR", "COLLECTION", "IDENTIFIER",

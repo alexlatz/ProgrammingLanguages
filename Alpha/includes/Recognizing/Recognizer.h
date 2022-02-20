@@ -12,10 +12,23 @@ class Recognizer {
     vector<Lexeme*>::iterator it;
     void consume(TokenType type);
     bool check(TokenType type);
+    bool checkNext(TokenType type);
     TokenType peek();
+    bool statementListPending();
+    bool statementPending();
+    bool variableInitPending();
+    bool assignmentPending();
+    bool fxnDeclarationPending();
+    bool fxnCallPending();
+    bool conditionalPending();
+    bool loopPending();
+    bool returnStatementPending();
+    bool commentPending();
+    bool conditionalOperatorPending();
+    bool forLoopPending();
+    bool whileLoopPending();
     public:
         Recognizer(vector<Lexeme*>& lexemes);
-
 };
 
 

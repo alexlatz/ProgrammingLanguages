@@ -7,8 +7,8 @@
 
 #include "Lexeme.h"
 #include "../Alpha.h"
-#include <vector>
 #include <fstream>
+#include <map>
 
 class Lexer {
     ifstream* file;

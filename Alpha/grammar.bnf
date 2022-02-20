@@ -96,7 +96,7 @@ comparison ::= primary comparisonOperator primary
 comparisonOperator ::= "less" | "more" | "is" | "lessis" | "moreis"
 
 //Statement Definitions
-variableInit ::= "let" assignment | "let" IDENTIFIER | collectionInit
+variableInit ::= "let" assignment | "let" IDENTIFIER ("V" number "A")?
 
 assignment ::= IDENTIFIER "be" expression
 
@@ -120,6 +120,4 @@ whileLoop ::= "while" "C" condition "D" block
 
 
 //Collections and Usage
-collectionInit ::= "let" IDENTIFIER "V" number? "A"
-
 collectionGet ::= IDENTIFIER "V" number "A"
