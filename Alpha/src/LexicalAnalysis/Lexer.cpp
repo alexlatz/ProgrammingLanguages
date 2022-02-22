@@ -139,9 +139,13 @@ Lexeme* Lexer::getNextLexeme() {
     }
 }
 
+bool Lexer::validMultiChar(char c) {
+    return isalpha(c) && c != 'D' && c != 'J' && c != 'A' && c != 'O';
+}
+
 Lexeme* Lexer::lexMultiChar(char c) {
     string word;
-    while (isalpha(c) && !file->eof()) {
+    while (validMultiChar(c) && !file->eof()) {
         word.push_back(c);
         file->get(c);
     }
@@ -151,7 +155,7 @@ Lexeme* Lexer::lexMultiChar(char c) {
         file->unget();
         return new Lexeme(type, lineNum);
     } else {
-        if (c != ' ') file->unget();
+        if (c == '\n' || c == '\t' || c == '\0' || c == 'D' || c == 'J' || c == 'A' || c == 'O') file->unget();
         if (Lexer::digits.count(word) > 0) return lexNumber(word);
         else if (word == "true" || word == "false") return new Lexeme(TokenType::BOOL, lineNum, word == "true");
         else return new Lexeme(TokenType::IDENTIFIER, lineNum, word);

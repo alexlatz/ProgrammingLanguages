@@ -9,12 +9,11 @@
 
 class Recognizer {
     const vector<Lexeme*> lexemes;
-    vector<Lexeme*>::iterator it;
+    vector<Lexeme*>::const_iterator it;
     void consume(TokenType type);
     bool check(TokenType type);
     bool checkNext(TokenType type);
     TokenType peek();
-    bool statementListPending();
     bool statementPending();
     bool variableInitPending();
     bool assignmentPending();
@@ -29,6 +28,7 @@ class Recognizer {
     bool whileLoopPending();
     public:
         Recognizer(vector<Lexeme*>& lexemes);
+        bool statementListPending();
 };
 
 

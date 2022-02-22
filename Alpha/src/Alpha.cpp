@@ -2,7 +2,7 @@
 // Created by Alex Latz on 2/9/22.
 //
 
-#include "../includes/LexicalAnalysis/Lexer.h"
+#include "../includes/Recognizing/Recognizer.h"
 
 vector<string> Alpha::runtimeErrors;
 vector<string> Alpha::syntaxErrors;
@@ -20,6 +20,8 @@ void Alpha::runFile(const char* path) {
 void Alpha::run(ifstream* file) {
     Lexer lexer(file);
     vector<Lexeme*> lexemes = lexer.lex();
+    Recognizer recognizer(lexemes);
+    cout << recognizer.statementListPending() << endl;
     for (Lexeme* lex : lexemes) cout << *lex << endl;
 }
 

@@ -21,6 +21,7 @@ class Lexer {
     Lexeme* lexQuotes(bool str);
     Lexeme* lexNumber(string& firstWord);
     double parseHundredsGroup(vector<string>::reverse_iterator begin, vector<string>::reverse_iterator end) const;
+    bool validMultiChar(char c);
 public:
     Lexer(ifstream* file);
     vector<Lexeme*> lex();

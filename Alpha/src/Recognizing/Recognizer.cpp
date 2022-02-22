@@ -5,7 +5,7 @@
 #include "../../includes/Recognizing/Recognizer.h"
 
 Recognizer::Recognizer(vector<Lexeme *>& lexemes) : lexemes(lexemes) {
-    this->it = lexemes.begin();
+    this->it = this->lexemes.begin();
 }
 
 void Recognizer::consume(TokenType type) {
