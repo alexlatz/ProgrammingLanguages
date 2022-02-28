@@ -79,4 +79,111 @@ bool Recognizer::whileLoopPending() {
     return check(WHILE);
 }
 
+void Recognizer::program() {
+    if (statementListPending()) {
+        statementList();
+    }
+}
+
+void Recognizer::statementList() {
+    while (statementPending()) {
+        statement();
+    }
+}
+
+void Recognizer::statement() {
+    if (!commentPending()) {
+        if (variableInitPending()) variableInit();
+        else if (assignmentPending()) assignment();
+        else if (fxnDeclarationPending()) fxnDeclaration();
+        else if (fxnCallPending()) fxnCall();
+        else if (conditionalPending()) conditional();
+        else if (loopPending()) loop();
+        else if (returnStatementPending()) returnStatement();
+        lineEnd();
+        if (commentPending()) comment();
+    } else comment();
+}
+
+void Recognizer::variableInit() {
+    consume(LET);
+    if (assignmentPending()) assignment();
+    else if (check(IDENTIFIER)) {
+        consume(IDENTIFIER);
+        if (check(OPEN_SQ_BRACKET)) {
+            consume(OPEN_SQ_BRACKET);
+            consume(NUMBER);
+            consume(CLOSE_SQ_BRACKET);
+        }
+    }
+}
+
+void Recognizer::assignment() {
+    consume(IDENTIFIER);
+    consume(BE);
+    expression();
+}
+
+void Recognizer::fxnDeclaration() {
+    consume(FXN);
+    consume(IDENTIFIER);
+    consume(OPEN_PAREN);
+    parameters();
+    consume(CLOSE_PAREN);
+    block();
+}
+
+void Recognizer::fxnCall() {
+    consume(IDENTIFIER);
+    consume(OPEN_PAREN);
+    parameters();
+    consume(CLOSE_PAREN);
+}
+
+void Recognizer::conditional() {
+    conditionalOperator();
+    consume(OPEN_PAREN);
+    condition();
+    consume(CLOSE_PAREN);
+    block();
+}
+
+void Recognizer::loop() {
+    if (forLoopPending()) {
+        consume(FOR);
+        consume(OPEN_PAREN);
+        variableInit();
+        if (check(IN)) {
+            consume(IN);
+            consume(IDENTIFIER);
+        } else if (check(LINE_END)) {
+            consume(LINE_END);
+            condition();
+            consume(LINE_END);
+            expression();
+        }
+        consume(CLOSE_PAREN)
+    } else if (whileLoopPending()) {
+        consume(WHILE);
+        consume(OPEN_PAREN);
+        condition();
+        consume(CLOSE_PAREN);
+    }
+    block();
+}
+
+void Recognizer::returnStatement() {
+    consume(RETURN);
+    primary();
+}
+
+void Recognizer::lineEnd() {
+    consume(LINE_END);
+}
+
+void Recognizer::comment() {
+    consume(COMMENT_LINEEND);
+}
+
+
 

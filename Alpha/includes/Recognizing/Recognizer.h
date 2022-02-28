@@ -26,9 +26,22 @@ class Recognizer {
     bool conditionalOperatorPending();
     bool forLoopPending();
     bool whileLoopPending();
+    void program();
+    void statementList();
+    void statement();
+    void variableInit();
+    void assignment();
+    void fxnDeclaration();
+    void fxnCall();
+    void conditional();
+    void loop();
+    void returnStatement();
+    void lineEnd();
+    void comment();
     public:
         Recognizer(vector<Lexeme*>& lexemes);
         bool statementListPending();
+
 };
 
 
