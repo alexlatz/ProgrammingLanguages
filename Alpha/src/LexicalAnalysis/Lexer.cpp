@@ -15,6 +15,7 @@ vector<Lexeme*> Lexer::lex() {
         Lexeme* lexeme = getNextLexeme();
         if (lexeme != nullptr) vec.push_back(lexeme);
     }
+    if (vec.size() > 1  && vec[vec.size()-1]->getType() != TokenType::LINE_END) vec.push_back(new Lexeme(TokenType::LINE_END, lineNum));
     vec.push_back(new Lexeme(TokenType::ENDFILE, lineNum));
     return vec;
 }

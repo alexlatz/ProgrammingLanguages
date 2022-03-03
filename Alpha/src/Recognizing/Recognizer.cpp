@@ -23,7 +23,7 @@ bool Recognizer::check(TokenType type) {
 }
 
 bool Recognizer::checkNext(TokenType type) {
-    return (it != lexemes.end()) && (*(it + 1))->getType();
+    return (it != lexemes.end()) && (*(it + 1))->getType() == type;
 }
 
 TokenType Recognizer::peek() {
@@ -31,7 +31,11 @@ TokenType Recognizer::peek() {
 }
 
 TokenType Recognizer::peekNext() {
-    return (it != lexemes.end()) ? ENDFILE : (*(it + 1))->getType();
+    if (it != lexemes.end()) return (*(it + 1))->getType();
+    else {
+        Alpha::runtimeError(Lexeme(TokenType::ENDFILE, 0), "Expected additional lexeme");
+        return ENDFILE;
+    }
 }
 
 bool Recognizer::statementListPending() {
@@ -45,19 +49,19 @@ bool Recognizer::statementPending() {
 }
 
 bool Recognizer::variableInitPending() {
-    return check(LET);
+    return check(TokenType::LET);
 }
 
 bool Recognizer::assignmentPending() {
-    return check(IDENTIFIER) && checkNext(BE);
+    return check(TokenType::IDENTIFIER) && checkNext(TokenType::BE);
 }
 
 bool Recognizer::fxnDeclarationPending() {
-    return check(FXN);
+    return check(TokenType::FXN);
 }
 
 bool Recognizer::fxnCallPending() {
-    return check(IDENTIFIER) && checkNext(OPEN_PAREN);
+    return check(TokenType::IDENTIFIER) && checkNext(TokenType::OPEN_PAREN);
 }
 
 bool Recognizer::conditionalPending() {
@@ -69,37 +73,37 @@ bool Recognizer::loopPending() {
 }
 
 bool Recognizer::returnStatementPending() {
-    return check(RETURN);
+    return check(TokenType::RETURN);
 }
 
 bool Recognizer::commentPending() {
-    return check(COMMENT_LINEEND);
+    return check(TokenType::COMMENT_LINEEND);
 }
 
 bool Recognizer::conditionalOperatorPending() {
-    return check(IF) || check(ELIF) || check(ELSE);
+    return check(TokenType::IF) || check(TokenType::ELIF) || check(TokenType::ELSE);
 }
 
 bool Recognizer::forLoopPending() {
-    return check(FOR);
+    return check(TokenType::FOR);
 }
 
 bool Recognizer::whileLoopPending() {
-    return check(WHILE);
+    return check(TokenType::WHILE);
 }
 
 bool Recognizer::primaryPending() {
-    return check(BOOL) || check(NUMBER) || check(STRING) || check(CHAR) || collectionGetPending() || parenthesizedExpressionPending();
+    return check(TokenType::BOOL) || check(TokenType::NUMBER) || check(TokenType::STRING) || check(TokenType::CHAR) || collectionGetPending() || parenthesizedExpressionPending() || check(TokenType::IDENTIFIER);
 }
 
 bool Recognizer::collectionGetPending() {
-    return check(IDENTIFIER) && checkNext(OPEN_SQ_BRACKET);
+    return check(TokenType::IDENTIFIER) && checkNext(TokenType::OPEN_SQ_BRACKET);
 }
 
 bool Recognizer::parenthesizedExpressionPending() {
     //not looking one into the future because it would require
     //like 10 other functions for a minor issue that the recognizer would still catch
-    return check(OPEN_PAREN);
+    return check(TokenType::OPEN_PAREN);
 }
 
 bool Recognizer::binaryExpressionPending() {
@@ -115,7 +119,7 @@ bool Recognizer::parameterPending() {
 }
 
 bool Recognizer::booleanOperandPending() {
-    return comparisonPending() || check(BOOL) || parenthesizedBooleanPending();
+    return comparisonPending() || check(TokenType::BOOL) || parenthesizedBooleanPending();
 }
 
 bool Recognizer::booleanBinaryExpPending() {
@@ -129,28 +133,28 @@ bool Recognizer::comparisonPending() {
 bool Recognizer::parenthesizedBooleanPending() {
     //not looking one into the future because it would require
     //like 10 other functions for a minor issue that the recognizer would still catch
-    return check(OPEN_PAREN);
+    return check(TokenType::OPEN_PAREN);
 }
 
 bool Recognizer::booleanUnaryExpPending() {
-    return check(NOT);
+    return check(TokenType::NOT);
 }
 
 bool Recognizer::isBinaryOperator(TokenType type) {
-    return type == BE || type == ADD || type == SUB || type == X || type == DIV
-        || type == MOD || type == ADDBE || type == SUBBE || type == XBE || type == DIVBE || type == MODBE;
+    return type == TokenType::BE || type == TokenType::ADD || type == TokenType::SUB || type == TokenType::X || type == TokenType::DIV
+        || type == TokenType::MOD || type == TokenType::ADDBE || type == TokenType::SUBBE || type == TokenType::XBE || type == TokenType::DIVBE || type == TokenType::MODBE;
 }
 
 bool Recognizer::isUnaryOperator(TokenType type) {
-    return type == INC || type == DEC;
+    return type == TokenType::INC || type == TokenType::DEC;
 }
 
 bool Recognizer::isBooleanBinaryOperator(TokenType type) {
-    return type == AND || type == OR;
+    return type == TokenType::AND || type == TokenType::OR;
 }
 
 bool Recognizer::isComparisonOperator(TokenType type) {
-    return type == LESS || type == MORE || type == IS || type == LESSIS || type == MOREIS;
+    return type == TokenType::LESS || type == TokenType::MORE || type == TokenType::IS || type == TokenType::LESSIS || type == TokenType::MOREIS;
 }
 
 void Recognizer::program() {
@@ -180,89 +184,89 @@ void Recognizer::statement() {
 }
 
 void Recognizer::variableInit() {
-    consume(LET);
+    consume(TokenType::LET);
     if (assignmentPending()) assignment();
-    else if (check(IDENTIFIER)) {
-        consume(IDENTIFIER);
-        if (check(OPEN_SQ_BRACKET)) {
-            consume(OPEN_SQ_BRACKET);
-            consume(NUMBER);
-            consume(CLOSE_SQ_BRACKET);
+    else if (check(TokenType::IDENTIFIER)) {
+        consume(TokenType::IDENTIFIER);
+        if (check(TokenType::OPEN_SQ_BRACKET)) {
+            consume(TokenType::OPEN_SQ_BRACKET);
+            consume(TokenType::NUMBER);
+            consume(TokenType::CLOSE_SQ_BRACKET);
         }
     }
 }
 
 void Recognizer::assignment() {
-    consume(IDENTIFIER);
-    consume(BE);
+    consume(TokenType::IDENTIFIER);
+    consume(TokenType::BE);
     expression();
 }
 
 void Recognizer::fxnDeclaration() {
-    consume(FXN);
-    consume(IDENTIFIER);
-    consume(OPEN_PAREN);
+    consume(TokenType::FXN);
+    consume(TokenType::IDENTIFIER);
+    consume(TokenType::OPEN_PAREN);
     parameter();
-    consume(CLOSE_PAREN);
+    consume(TokenType::CLOSE_PAREN);
     block();
 }
 
 void Recognizer::fxnCall() {
-    consume(IDENTIFIER);
-    consume(OPEN_PAREN);
+    consume(TokenType::IDENTIFIER);
+    consume(TokenType::OPEN_PAREN);
     parameter();
-    consume(CLOSE_PAREN);
+    consume(TokenType::CLOSE_PAREN);
 }
 
 void Recognizer::conditional() {
     conditionalOperator();
-    consume(OPEN_PAREN);
+    consume(TokenType::OPEN_PAREN);
     condition();
-    consume(CLOSE_PAREN);
+    consume(TokenType::CLOSE_PAREN);
     block();
 }
 
 void Recognizer::loop() {
     if (forLoopPending()) {
-        consume(FOR);
-        consume(OPEN_PAREN);
+        consume(TokenType::FOR);
+        consume(TokenType::OPEN_PAREN);
         variableInit();
-        if (check(IN)) {
-            consume(IN);
-            consume(IDENTIFIER);
-        } else if (check(LINE_END)) {
-            consume(LINE_END);
+        if (check(TokenType::IN)) {
+            consume(TokenType::IN);
+            consume(TokenType::IDENTIFIER);
+        } else if (check(TokenType::LINE_END)) {
+            consume(TokenType::LINE_END);
             condition();
-            consume(LINE_END);
+            consume(TokenType::LINE_END);
             expression();
         }
-        consume(CLOSE_PAREN);
+        consume(TokenType::CLOSE_PAREN);
     } else if (whileLoopPending()) {
-        consume(WHILE);
-        consume(OPEN_PAREN);
+        consume(TokenType::WHILE);
+        consume(TokenType::OPEN_PAREN);
         condition();
-        consume(CLOSE_PAREN);
+        consume(TokenType::CLOSE_PAREN);
     }
     block();
 }
 
 void Recognizer::returnStatement() {
-    consume(RETURN);
+    consume(TokenType::RETURN);
     primary();
 }
 
 void Recognizer::lineEnd() {
-    consume(LINE_END);
+    consume(TokenType::LINE_END);
 }
 
 void Recognizer::comment() {
-    consume(COMMENT_LINEEND);
+    consume(TokenType::COMMENT_LINEEND);
 }
 
 void Recognizer::expression() {
-    if (primaryPending()) primary();
-    else if (binaryExpressionPending()) binaryExpression();
+    if (binaryExpressionPending()) binaryExpression();
     else if (unaryExpressionPending()) unaryExpression();
+    else if (primaryPending()) primary();
 }
 
 void Recognizer::binaryExpression() {
@@ -292,15 +296,15 @@ void Recognizer::parameter() {
 }
 
 void Recognizer::block() {
-    consume(OPEN_BLOCK);
+    consume(TokenType::OPEN_BLOCK);
     if (statementListPending()) statementList();
-    consume(CLOSE_BLOCK);
+    consume(TokenType::CLOSE_BLOCK);
 }
 
 void Recognizer::conditionalOperator() {
-    if (check(IF)) consume(IF);
-    else if (check(ELIF)) consume(ELIF);
-    else if (check(ELSE)) consume(ELSE);
+    if (check(TokenType::IF)) consume(TokenType::IF);
+    else if (check(TokenType::ELIF)) consume(TokenType::ELIF);
+    else if (check(TokenType::ELSE)) consume(TokenType::ELSE);
 }
 
 void Recognizer::condition() {
@@ -311,7 +315,7 @@ void Recognizer::condition() {
 
 void Recognizer::booleanOperand() {
     if (comparisonPending()) comparison();
-    else if (check(BOOL)) consume(BOOL);
+    else if (check(TokenType::BOOL)) consume(TokenType::BOOL);
     else if (parenthesizedBooleanPending()) parenthesizedBoolean();
 }
 
@@ -322,7 +326,7 @@ void Recognizer::booleanBinaryExp() {
 }
 
 void Recognizer::booleanUnaryExp() {
-    consume(NOT);
+    consume(TokenType::NOT);
     booleanOperand();
 }
 
@@ -333,14 +337,14 @@ void Recognizer::comparison() {
 }
 
 void Recognizer::parenthesizedBoolean() {
-    consume(OPEN_PAREN);
+    consume(TokenType::OPEN_PAREN);
     condition();
-    consume(CLOSE_PAREN);
+    consume(TokenType::CLOSE_PAREN);
 }
 
 void Recognizer::booleanBinaryOperator() {
-    if (check(AND)) consume(AND);
-    else if (check(OR)) consume(OR);
+    if (check(TokenType::AND)) consume(TokenType::AND);
+    else if (check(TokenType::OR)) consume(TokenType::OR);
 }
 
 void Recognizer::comparisonOperator() {
@@ -348,26 +352,26 @@ void Recognizer::comparisonOperator() {
 }
 
 void Recognizer::primary() {
-    if (check(NUMBER)) consume(NUMBER);
-    else if (check(BOOL)) consume(BOOL);
-    else if (check(STRING)) consume(STRING);
-    else if (check(CHAR)) consume(CHAR);
+    if (check(TokenType::NUMBER)) consume(TokenType::NUMBER);
+    else if (check(TokenType::BOOL)) consume(TokenType::BOOL);
+    else if (check(TokenType::STRING)) consume(TokenType::STRING);
+    else if (check(TokenType::CHAR)) consume(TokenType::CHAR);
     else if (collectionGetPending()) collectionGet();
     else if (parenthesizedExpressionPending()) parenthesizedExpression();
-    else if (check(IDENTIFIER)) consume(IDENTIFIER);
+    else if (check(TokenType::IDENTIFIER)) consume(TokenType::IDENTIFIER);
 }
 
 void Recognizer::collectionGet() {
     primary();
-    consume(OPEN_SQ_BRACKET);
-    consume(NUMBER);
-    consume(CLOSE_SQ_BRACKET);
+    consume(TokenType::OPEN_SQ_BRACKET);
+    consume(TokenType::NUMBER);
+    consume(TokenType::CLOSE_SQ_BRACKET);
 }
 
 void Recognizer::parenthesizedExpression() {
-    consume(OPEN_PAREN);
+    consume(TokenType::OPEN_PAREN);
     expression();
-    consume(CLOSE_PAREN);
+    consume(TokenType::CLOSE_PAREN);
 }
 
 
