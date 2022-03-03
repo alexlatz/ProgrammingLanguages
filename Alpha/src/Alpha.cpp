@@ -21,8 +21,7 @@ void Alpha::run(ifstream* file) {
     Lexer lexer(file);
     vector<Lexeme*> lexemes = lexer.lex();
     Recognizer recognizer(lexemes);
-    cout << recognizer.statementListPending() << endl;
-    for (Lexeme* lex : lexemes) cout << *lex << endl;
+    recognizer.program();
 }
 
 void Alpha::syntaxError(int lineNumber, string where, string message) {
