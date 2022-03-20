@@ -8,14 +8,18 @@ Recognizer::Recognizer(vector<Lexeme *>& lexemes) : lexemes(lexemes) {
     this->it = this->lexemes.begin();
 }
 
-void Recognizer::consume(TokenType type) {
+Lexeme* Recognizer::consume(TokenType type) {
+    Lexeme* lex = *it;
     if (check(type) && it != lexemes.end()) it++;
     else Alpha::runtimeError((*it)->getLineNum(), "recognizing", "Expected " + tokenName[(*it)->getType()]);
+    return lex;
 }
 
-void Recognizer::consume() {
+Lexeme* Recognizer::consume() {
+    Lexeme* lex = *it;
     if (it != lexemes.end()) it++;
     else Alpha::runtimeError((*it)->getLineNum(), "recognizing", "Expected lexeme");
+    return lex;
 }
 
 bool Recognizer::check(TokenType type) {
@@ -64,10 +68,6 @@ bool Recognizer::fxnCallPending() {
     return check(TokenType::IDENTIFIER) && checkNext(TokenType::OPEN_PAREN);
 }
 
-bool Recognizer::conditionalPending() {
-    return conditionalOperatorPending();
-}
-
 bool Recognizer::loopPending() {
     return forLoopPending() || whileLoopPending();
 }
@@ -78,10 +78,6 @@ bool Recognizer::returnStatementPending() {
 
 bool Recognizer::commentPending() {
     return check(TokenType::COMMENT_LINEEND);
-}
-
-bool Recognizer::conditionalOperatorPending() {
-    return check(TokenType::IF) || check(TokenType::ELIF) || check(TokenType::ELSE);
 }
 
 bool Recognizer::forLoopPending() {
@@ -157,16 +153,23 @@ bool Recognizer::isComparisonOperator(TokenType type) {
     return type == TokenType::LESS || type == TokenType::MORE || type == TokenType::IS || type == TokenType::LESSIS || type == TokenType::MOREIS;
 }
 
-void Recognizer::program() {
+Lexeme* Recognizer::program() {
+    auto* statementList = new Lexeme(STATEMENTLIST, 0);
     if (statementListPending()) {
-        statementList();
+        Lexeme* lex = statementList();
+        statementList->setChild(lex);
     }
+    return statementList;
 }
 
-void Recognizer::statementList() {
+Lexeme* Recognizer::statementList() {
+    Lexeme* statementList = new Lexeme(STATEMENTLIST, 0);
     while (statementPending()) {
-        statement();
+        Lexeme* statement = statement();
+        statementList->setChild(statement);
     }
+    if (statementList->getChildrenLength() > 0) statementList->setLineNum(statementList->getChild(0)->getLineNum());
+    return statementList;
 }
 
 void Recognizer::statement() {
@@ -183,47 +186,76 @@ void Recognizer::statement() {
     } else comment();
 }
 
-void Recognizer::variableInit() {
-    consume(TokenType::LET);
-    if (assignmentPending()) assignment();
+Lexeme* Recognizer::variableInit() {
+    Lexeme* let = consume(TokenType::LET);
+    if (assignmentPending()) {
+        Lexeme* be = assignment();
+        let->setChild(be);
+    }
     else if (check(TokenType::IDENTIFIER)) {
-        consume(TokenType::IDENTIFIER);
+        let->setChild(consume(TokenType::IDENTIFIER));
         if (check(TokenType::OPEN_SQ_BRACKET)) {
             consume(TokenType::OPEN_SQ_BRACKET);
-            consume(TokenType::NUMBER);
+            let->setChild(consume(TokenType::NUMBER));
             consume(TokenType::CLOSE_SQ_BRACKET);
         }
     }
+    return let;
 }
 
-void Recognizer::assignment() {
-    consume(TokenType::IDENTIFIER);
-    consume(TokenType::BE);
-    expression();
+Lexeme* Recognizer::assignment() {
+    Lexeme* identifier = consume(TokenType::IDENTIFIER);
+    Lexeme* be = consume(TokenType::BE);
+    be->setChild(identifier);
+    be->setChild(expression());
+    return be;
 }
 
-void Recognizer::fxnDeclaration() {
-    consume(TokenType::FXN);
-    consume(TokenType::IDENTIFIER);
+Lexeme* Recognizer::fxnDeclaration() {
+    Lexeme* fxn = consume(TokenType::FXN);
+    fxn->setChild(consume(TokenType::IDENTIFIER));
     consume(TokenType::OPEN_PAREN);
-    parameter();
+    fxn->setChild(parameter());
     consume(TokenType::CLOSE_PAREN);
-    block();
+    fxn->setChild(block());
+    return fxn;
 }
 
-void Recognizer::fxnCall() {
-    consume(TokenType::IDENTIFIER);
+Lexeme* Recognizer::fxnCall() {
+    Lexeme* id = consume(TokenType::IDENTIFIER);
+    Lexeme* call = new Lexeme(FXN_CALL, id->getLineNum());
+    call->setChild(id);
     consume(TokenType::OPEN_PAREN);
-    parameter();
+    call->setChild(parameter());
     consume(TokenType::CLOSE_PAREN);
+    return call;
 }
 
-void Recognizer::conditional() {
-    conditionalOperator();
+Lexeme* Recognizer::conditional() {
+    Lexeme* op = consume(IF);
     consume(TokenType::OPEN_PAREN);
-    condition();
+    op->setChild(condition());
     consume(TokenType::CLOSE_PAREN);
-    block();
+    op->setChild(block());
+    if (check(TokenType::ELIF) || check(TokenType::ELSE)) op->setChild(elifOrElse());
+    return op;
+}
+
+Lexeme* Recognize::elifOrElse() {
+    Lexeme* op;
+    if (check(TokenType::ELSE)) {
+        op = consume(TokenType::ELSE);
+        op->setChild(block());
+    }
+    else {
+        op = consume(TokenType::ELIF);
+        consume(TokenType::OPEN_PAREN);
+        op->setChild(condition());
+        consume(TokenType::CLOSE_PAREN);
+        op->setChild(block());
+        op->setChild(elifOrElse());
+    }
+    return op;
 }
 
 void Recognizer::loop() {
@@ -299,12 +331,6 @@ void Recognizer::block() {
     consume(TokenType::OPEN_BLOCK);
     if (statementListPending()) statementList();
     consume(TokenType::CLOSE_BLOCK);
-}
-
-void Recognizer::conditionalOperator() {
-    if (check(TokenType::IF)) consume(TokenType::IF);
-    else if (check(TokenType::ELIF)) consume(TokenType::ELIF);
-    else if (check(TokenType::ELSE)) consume(TokenType::ELSE);
 }
 
 void Recognizer::condition() {

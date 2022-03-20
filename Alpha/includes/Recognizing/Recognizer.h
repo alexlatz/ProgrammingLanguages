@@ -11,8 +11,8 @@
 class Recognizer {
     const vector<Lexeme*> lexemes;
     vector<Lexeme*>::const_iterator it;
-    void consume(TokenType type);
-    void consume();
+    Lexeme* consume(TokenType type);
+    Lexeme* consume();
     bool check(TokenType type);
     bool checkNext(TokenType type);
     TokenType peek();
@@ -27,7 +27,6 @@ class Recognizer {
     bool loopPending();
     bool returnStatementPending();
     bool commentPending();
-    bool conditionalOperatorPending();
     bool forLoopPending();
     bool whileLoopPending();
     bool primaryPending();

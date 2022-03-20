@@ -40,13 +40,15 @@ enum TokenType {
     //boolean operators
     AND, OR, NOT, LESS, MORE, IS, LESSIS, MOREIS,
     //file end (can't name it EOF bc that's a defined constant in C++
-    ENDFILE
+    ENDFILE,
+    STATEMENTLIST, FXN_CALL, STATEMENT
 };
 
 class Lexeme {
     TokenType type;
     int lineNum;
     boost::variant<double, string, char, bool> value;
+    vector<Lexeme*> children;
     friend ostream& operator<<(ostream& stream, const Lexeme& lexeme) {
         stream << "(" << "Type: " << tokenName.at(lexeme.type) << ", " << lexeme.lineNum << ", ";
         if (lexeme.value.type() == typeid(std::string)) stream << boost::get<string>(lexeme.value);
@@ -66,6 +68,10 @@ public:
     void setLineNum(int lineNum);
     TokenType getType();
     int getLineNum();
+    int getChildrenLength();
+    void setChild(Lexeme* child, int index);
+    void setChild(Lexeme* child);
+    Lexeme* getChild(int index);
     boost::variant<double, string, char, bool> getValue();
 };
 

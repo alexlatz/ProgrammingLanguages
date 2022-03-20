@@ -3,6 +3,7 @@
 //
 
 #include "../../includes/LexicalAnalysis/Lexeme.h"
+#include "../../includes/Alpha.h"
 #include "boost/lexical_cast.hpp"
 
 Lexeme::Lexeme(TokenType type, int lineNum) {
@@ -55,3 +56,21 @@ string Lexeme::toString() {
     return "(Type: " + tokenName.at(this->type) + ", " + to_string(this->lineNum) + ", " + value + ")";
 }
 
+int Lexeme::getChildrenLength() {
+    return this->children.size();
+}
+
+void Lexeme::setChild(Lexeme* child, int index) {
+    if (index >= this->children.size()) this->children.resize(index + 1);
+    this->children.insert(this->children.begin() + index, child);
+}
+
+void Lexeme::setChild(Lexeme* child) {
+    this->children.push_back(child);
+}
+
+Lexeme *Lexeme::getChild(int index) {
+    if (index < this->children.size() && index >= 0) return this->children[index];
+    else Alpha::runtimeError(0, "Parsing child", "Child not found at index " + to_string(index));
+    return nullptr;
+}
