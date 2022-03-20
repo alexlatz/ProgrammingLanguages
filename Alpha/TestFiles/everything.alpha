@@ -1,0 +1,22 @@
+let a be two million three hundred fifty five thousand one hundred thirteen
+
+let b
+
+fxn testfxnCa bD L
+    rtrn b
+J
+
+testfxnCb aD
+
+for Clet c be two millionO c more two million tenO c incD L
+    printCdB test DbD
+J
+
+let d be true
+while Cd and not falseD L
+    d be false
+J
+
+if Cnot dD L
+J elif Cnot CdB test Db is dB test DbDD L J
+else printCdB end DbD

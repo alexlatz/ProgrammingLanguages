@@ -2,17 +2,18 @@
 // Created by Alex Latz on 2/18/22.
 //
 
-#ifndef PROGRAMMINGLANGUAGES_RECOGNIZER_H
-#define PROGRAMMINGLANGUAGES_RECOGNIZER_H
+#ifndef PROGRAMMINGLANGUAGES_PARSER_H
+#define PROGRAMMINGLANGUAGES_PARSER_H
 
 #include "../../includes/LexicalAnalysis/Lexeme.h"
 #include "../../includes/Alpha.h"
 
-class Recognizer {
+class Parser {
     const vector<Lexeme*> lexemes;
     vector<Lexeme*>::const_iterator it;
     Lexeme* consume(TokenType type);
     Lexeme* consume();
+    int getLineNum();
     bool check(TokenType type);
     bool checkNext(TokenType type);
     TokenType peek();
@@ -27,6 +28,7 @@ class Recognizer {
     bool loopPending();
     bool returnStatementPending();
     bool commentPending();
+    bool lineEndPending();
     bool forLoopPending();
     bool whileLoopPending();
     bool primaryPending();
@@ -40,44 +42,44 @@ class Recognizer {
     bool booleanUnaryExpPending();
     bool comparisonPending();
     bool parenthesizedBooleanPending();
-    void statementList();
-    void statement();
-    void variableInit();
-    void assignment();
-    void fxnDeclaration();
-    void fxnCall();
-    void conditional();
-    void loop();
-    void returnStatement();
+    Lexeme* statementList();
+    Lexeme* statement();
+    Lexeme* variableInit();
+    Lexeme* assignment();
+    Lexeme* fxnDeclaration();
+    Lexeme* fxnCall();
+    Lexeme* conditional();
+    Lexeme* elifOrElse();
+    Lexeme* loop();
+    Lexeme* returnStatement();
     void lineEnd();
     void comment();
-    void expression();
-    void binaryExpression();
-    void unaryExpression();
-    void binaryOperator();
-    void unaryOperator();
-    void parameter();
-    void block();
-    void conditionalOperator();
-    void condition();
-    void booleanOperand();
-    void booleanBinaryExp();
-    void booleanUnaryExp();
-    void comparison();
-    void parenthesizedBoolean();
-    void booleanBinaryOperator();
-    void comparisonOperator();
-    void primary();
-    void collectionGet();
-    void parenthesizedExpression();
+    Lexeme* expression();
+    Lexeme* binaryExpression();
+    Lexeme* unaryExpression();
+    Lexeme* binaryOperator();
+    Lexeme* unaryOperator();
+    Lexeme* parameter();
+    Lexeme* block();
+    Lexeme* condition();
+    Lexeme* booleanOperand();
+    Lexeme* booleanBinaryExp();
+    Lexeme* booleanUnaryExp();
+    Lexeme* comparison();
+    Lexeme* parenthesizedBoolean();
+    Lexeme* booleanBinaryOperator();
+    Lexeme* comparisonOperator();
+    Lexeme* primary();
+    Lexeme* collectionGet();
+    Lexeme* parenthesizedExpression();
     bool isBinaryOperator(TokenType type);
     bool isUnaryOperator(TokenType type);
     bool isBooleanBinaryOperator(TokenType type);
     bool isComparisonOperator(TokenType type);
     public:
-        Recognizer(vector<Lexeme*>& lexemes);
-        void program();
+        Parser(vector<Lexeme*>& lexemes);
+        Lexeme* program();
 };
 
 
-#endif //PROGRAMMINGLANGUAGES_RECOGNIZER_H
+#endif //PROGRAMMINGLANGUAGES_PARSER_H

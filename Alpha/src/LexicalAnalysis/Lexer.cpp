@@ -141,7 +141,7 @@ Lexeme* Lexer::getNextLexeme() {
 }
 
 bool Lexer::validMultiChar(char c) {
-    return isalpha(c) && c != 'D' && c != 'J' && c != 'A' && c != 'O';
+    return isalpha(c) && c != 'C' && c != 'L' && c != 'V' && c != 'D' && c != 'J' && c != 'A' && c != 'O';
 }
 
 Lexeme* Lexer::lexMultiChar(char c) {
@@ -156,7 +156,7 @@ Lexeme* Lexer::lexMultiChar(char c) {
         file->unget();
         return new Lexeme(type, lineNum);
     } else {
-        if (c == '\n' || c == '\t' || c == '\0' || c == 'D' || c == 'J' || c == 'A' || c == 'O') file->unget();
+        if (c == '\n' || c == 'C' || c == 'L' || c == 'V' || c == '\t' || c == '\0' || c == 'D' || c == 'J' || c == 'A' || c == 'O') file->unget();
         if (Lexer::digits.count(word) > 0) return lexNumber(word);
         else if (word == "true" || word == "false") return new Lexeme(TokenType::BOOL, lineNum, word == "true");
         else return new Lexeme(TokenType::IDENTIFIER, lineNum, word);
@@ -211,15 +211,18 @@ Lexeme* Lexer::lexNumber(string& firstWord) {
         nextWord.clear();
         char c;
         file->get(c);
-        while (isalpha(c) && !file->eof()) {
+        while (validMultiChar(c) && !file->eof()) {
             nextWord.push_back(c);
             fullInput++;
             file->get(c);
         }
-        if (!isalpha(c)) fullInput++;
+        if (!validMultiChar(c)) fullInput++;
         if (!nextWord.empty() && (Lexer::digits.count(nextWord) > 0 || nextWord == "point")) {
             if (nextWord != "point" && !pointMode) words.push_back(nextWord);
-            else if (!pointMode) pointMode = true;
+            else if (!pointMode) {
+                pointMode = true;
+                decimals.push_back(nextWord);
+            }
             else decimals.push_back(nextWord);
             fullInput = 1;
         }

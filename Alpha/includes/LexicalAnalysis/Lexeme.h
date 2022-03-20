@@ -41,7 +41,7 @@ enum TokenType {
     AND, OR, NOT, LESS, MORE, IS, LESSIS, MOREIS,
     //file end (can't name it EOF bc that's a defined constant in C++
     ENDFILE,
-    STATEMENTLIST, FXN_CALL, STATEMENT
+    STATEMENTLIST, PARAMETERLIST
 };
 
 class Lexeme {

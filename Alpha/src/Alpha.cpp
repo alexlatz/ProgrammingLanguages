@@ -2,7 +2,8 @@
 // Created by Alex Latz on 2/9/22.
 //
 
-#include "../includes/Recognizing/Recognizer.h"
+#include "../includes/Alpha.h"
+#include "../includes/Parsing/Parser.h"
 
 vector<string> Alpha::runtimeErrors;
 vector<string> Alpha::syntaxErrors;
@@ -20,8 +21,10 @@ void Alpha::runFile(const char* path) {
 void Alpha::run(ifstream* file) {
     Lexer lexer(file);
     vector<Lexeme*> lexemes = lexer.lex();
-    Recognizer recognizer(lexemes);
-    recognizer.program();
+    for (Lexeme* lex : lexemes) cout << *lex << endl;
+    Parser parser(lexemes);
+    Lexeme* lex = parser.program();
+    cout << lex << endl;
 }
 
 void Alpha::syntaxError(int lineNumber, string where, string message) {
