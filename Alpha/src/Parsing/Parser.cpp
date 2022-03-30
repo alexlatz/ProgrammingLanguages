@@ -383,7 +383,6 @@ Lexeme* Parser::booleanOperand() {
     else if (check(TokenType::IDENTIFIER)) return consume(TokenType::IDENTIFIER);
     else if (parenthesizedBooleanPending()) return parenthesizedBoolean();
     else if (booleanUnaryExpPending()) return booleanUnaryExp();
-    else if (unaryExpressionPending()) return unaryExpression();
     Alpha::runtimeError(getLineNum(), "Parsing Boolean Operand", "Expected Comparison, boolean, or parenthesized boolean.");
     return nullptr;
 }
