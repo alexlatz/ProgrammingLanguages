@@ -21,7 +21,7 @@ static vector<string> tokenName = {"NUMBER", "BOOL", "STRING", "CHAR", "COLLECTI
                                    "MOD", "ADDBE", "SUBBE", "XBE", "DIVBE", "MODBE",
                                    "INC", "DEC",
                                    "AND", "OR", "NOT", "LESS", "MORE", "IS", "LESSIS", "MOREIS",
-                                   "ENDFILE"};
+                                   "ENDFILE", "STATEMENTLIST", "PARAMETERLIST"};
 enum TokenType {
     //variable types
     NUMBER, BOOL, STRING, CHAR, COLLECTION, IDENTIFIER,
@@ -49,13 +49,13 @@ class Lexeme {
     int lineNum;
     boost::variant<double, string, char, bool> value;
     vector<Lexeme*> children;
+    static ostream& printLexemeValue(ostream& stream, const Lexeme& lexeme);
+    static ostream& printLexeme(ostream& stream, const Lexeme& lex, int i);
     friend ostream& operator<<(ostream& stream, const Lexeme& lexeme) {
-        stream << "(" << "Type: " << tokenName.at(lexeme.type) << ", " << lexeme.lineNum << ", ";
-        if (lexeme.value.type() == typeid(std::string)) stream << boost::get<string>(lexeme.value);
-        else if (lexeme.value.type() == typeid(bool)) stream << (boost::get<bool>(lexeme.value) ? "true" : "false");
-        else if (lexeme.value.type() == typeid(double)) stream << ((boost::get<double>(lexeme.value) == 0) ? "\"\"" : to_string(boost::get<double>(lexeme.value)));
-        else stream << lexeme.value;
-        return stream << ")\n";
+        printLexemeValue(stream, lexeme);
+        stream << endl;
+        printLexeme(stream, lexeme, 0);
+        return stream;
     };
 public:
     Lexeme(TokenType type, int lineNum, double value);

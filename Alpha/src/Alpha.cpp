@@ -24,7 +24,7 @@ void Alpha::run(ifstream* file) {
     for (Lexeme* lex : lexemes) cout << *lex << endl;
     Parser parser(lexemes);
     Lexeme* lex = parser.program();
-    cout << lex << endl;
+    cout << *lex << endl;
 }
 
 void Alpha::syntaxError(int lineNumber, string where, string message) {

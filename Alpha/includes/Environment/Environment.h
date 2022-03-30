@@ -22,10 +22,10 @@ class Environment {
     }
     public:
         Environment(Environment* parent);
-        Lexeme* lookup(string name, int lineNum);
-        bool softLookup(string name, int lineNum);
-        void addSymbol(string name, Lexeme* symbol);
-        void modifySymbol(string name, Lexeme* newSymbol);
+        Lexeme* lookup(const string& name, int lineNum);
+        bool softLookup(const string& name, int lineNum);
+        void addSymbol(const string& name, Lexeme* symbol);
+        void modifySymbol(const string& name, Lexeme* newSymbol);
 };
 
 ostream& operator<<(ostream& stream, const Lexeme& lexeme);
