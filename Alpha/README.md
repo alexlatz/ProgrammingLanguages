@@ -176,3 +176,6 @@ To index into an array, list, or string, Alpha uses the `VA` postfix.
 
 ex. `arrVzeroA is five`
 
+### Cross-Type Operations
+
+A full list of operators and their results for different types can be found [here](https://docs.google.com/spreadsheets/d/1QlgnHaIWgfmdPA5GC0O03QBLwU0wPlMuLVbpba64jYk/edit?usp=sharing).
