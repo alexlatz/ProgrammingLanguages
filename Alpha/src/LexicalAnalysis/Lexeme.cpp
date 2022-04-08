@@ -75,16 +75,17 @@ Lexeme *Lexeme::getChild(int index) {
     return nullptr;
 }
 
-ostream& Lexeme::printLexemeValue(ostream& stream, const Lexeme& lexeme) {
+ostream& Lexeme::printLexemeValue(ostream& stream, Lexeme& lexeme) {
     stream << "(" << "Type: " << tokenName.at(lexeme.type) << ", " << lexeme.lineNum << ", ";
-    if (lexeme.value.type() == typeid(std::string)) stream << boost::get<string>(lexeme.value);
-    else if (lexeme.value.type() == typeid(bool)) stream << (boost::get<bool>(lexeme.value) ? "true" : "false");
-    else if (lexeme.value.type() == typeid(double)) stream << ((boost::get<double>(lexeme.value) == 0) ? "\"\"" : to_string(boost::get<double>(lexeme.value)));
+    if (lexeme.getType() == TokenType::STRING) stream << boost::get<string>(lexeme.value);
+    else if (lexeme.getType() == TokenType::CHAR) stream << (boost::get<char>(lexeme.value));
+    else if (lexeme.getType() == TokenType::BOOL) stream << (boost::get<bool>(lexeme.value) ? "true" : "false");
+    else if (lexeme.getType() == TokenType::NUMBER) stream << ((boost::get<double>(lexeme.value) == 0) ? "\"\"" : to_string(boost::get<double>(lexeme.value)));
     else stream << lexeme.value;
     stream << ")";
     return stream;
 }
-ostream& Lexeme::printLexeme(ostream& stream, const Lexeme& lex, int i) {
+ostream& Lexeme::printLexeme(ostream& stream, Lexeme& lex, int i) {
     if (!lex.children.empty()) {
         string s(i, ' ');
         stream << s;

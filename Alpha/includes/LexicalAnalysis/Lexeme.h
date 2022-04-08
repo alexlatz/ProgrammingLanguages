@@ -49,9 +49,9 @@ class Lexeme {
     int lineNum;
     boost::variant<double, string, char, bool> value;
     vector<Lexeme*> children;
-    static ostream& printLexemeValue(ostream& stream, const Lexeme& lexeme);
-    static ostream& printLexeme(ostream& stream, const Lexeme& lex, int i);
-    friend ostream& operator<<(ostream& stream, const Lexeme& lexeme) {
+    static ostream& printLexemeValue(ostream& stream, Lexeme& lexeme);
+    static ostream& printLexeme(ostream& stream, Lexeme& lex, int i);
+    friend ostream& operator<<(ostream& stream, Lexeme& lexeme) {
         printLexemeValue(stream, lexeme);
         stream << endl;
         printLexeme(stream, lexeme, 0);

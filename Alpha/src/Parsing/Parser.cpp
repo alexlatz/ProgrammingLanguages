@@ -153,6 +153,10 @@ bool Parser::isBinaryOperator(TokenType type) {
         || type == TokenType::MOD || type == TokenType::ADDBE || type == TokenType::SUBBE || type == TokenType::XBE || type == TokenType::DIVBE || type == TokenType::MODBE;
 }
 
+bool Parser::isComboBinaryOperator(TokenType type) {
+    return type == TokenType::ADDBE || type == TokenType::SUBBE || type == TokenType::XBE || type == TokenType::DIVBE || type == TokenType::MODBE;
+}
+
 bool Parser::isUnaryOperator(TokenType type) {
     return type == TokenType::INC || type == TokenType::DEC;
 }
@@ -331,6 +335,13 @@ Lexeme* Parser::binaryExpression() {
     Lexeme* op = binaryOperator();
     op->setChild(first);
     op->setChild(primary());
+    if (isComboBinaryOperator(op->getType()) && first->getType() != TokenType::IDENTIFIER) Alpha::runtimeError(getLineNum(), "Parsing binary expression", "Combo binary operator must have an identifier as the first operand");
+    else if (isComboBinaryOperator(op->getType())) {
+        Lexeme* be = new Lexeme(TokenType::BE, getLineNum());
+        be->setChild(first);
+        be->setChild(op);
+        return be;
+    }
     return op;
 }
 

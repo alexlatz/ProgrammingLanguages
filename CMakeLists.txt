@@ -11,13 +11,13 @@ SET(TARGET_H
         Alpha/includes/LexicalAnalysis/Lexeme.h
         Alpha/includes/LexicalAnalysis/Lexer.h
         Alpha/includes/Parsing/Parser.h
-        Alpha/includes/Environment/Environment.h)
+        Alpha/includes/Environment/Environment.h Alpha/includes/Evaluation/Evaluator.h)
 # Local source files here
 SET(TARGET_SRC
         Alpha/src/Alpha.cpp
         Alpha/src/LexicalAnalysis/Lexeme.cpp
         Alpha/src/LexicalAnalysis/Lexer.cpp
         Alpha/src/Parsing/Parser.cpp
-        Alpha/src/Environment/Environment.cpp)
+        Alpha/src/Environment/Environment.cpp Alpha/src/Evaluation/Evaluator.cpp)
 
 add_executable(Alpha ${TARGET_H} ${TARGET_SRC})

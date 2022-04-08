@@ -73,6 +73,7 @@ class Parser {
     Lexeme* collectionGet();
     Lexeme* parenthesizedExpression();
     bool isBinaryOperator(TokenType type);
+    bool isComboBinaryOperator(TokenType type);
     bool isUnaryOperator(TokenType type);
     bool isBooleanBinaryOperator(TokenType type);
     bool isComparisonOperator(TokenType type);

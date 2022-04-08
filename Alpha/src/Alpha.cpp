@@ -4,6 +4,8 @@
 
 #include "../includes/Alpha.h"
 #include "../includes/Parsing/Parser.h"
+#include "../includes/Environment/Environment.h"
+#include "../includes/Evaluation/Evaluator.h"
 
 vector<string> Alpha::runtimeErrors;
 vector<string> Alpha::syntaxErrors;
@@ -21,10 +23,11 @@ void Alpha::runFile(const char* path) {
 void Alpha::run(ifstream* file) {
     Lexer lexer(file);
     vector<Lexeme*> lexemes = lexer.lex();
-    for (Lexeme* lex : lexemes) cout << *lex << endl;
     Parser parser(lexemes);
     Lexeme* lex = parser.program();
-    cout << *lex << endl;
+    Environment global(nullptr);
+    Evaluator eval;
+    cout << *eval.eval(lex, global) << endl;
 }
 
 void Alpha::syntaxError(int lineNumber, string where, string message) {
