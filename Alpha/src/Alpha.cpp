@@ -23,6 +23,7 @@ void Alpha::runFile(const char* path) {
 void Alpha::run(ifstream* file) {
     Lexer lexer(file);
     vector<Lexeme*> lexemes = lexer.lex();
+    for (Lexeme* lex : lexemes) cout << *lex << endl;
     Parser parser(lexemes);
     Lexeme* lex = parser.program();
     Environment global(nullptr);

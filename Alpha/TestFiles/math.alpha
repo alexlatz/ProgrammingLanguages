@@ -1,1 +1,8 @@
-let x be one add one
+let y be one
+if Cy is oneD L
+    y addbe three
+J elif Cy is fourD L
+    y addbe two
+J else L
+    y subbe one
+J

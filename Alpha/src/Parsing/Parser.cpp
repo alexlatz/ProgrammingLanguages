@@ -53,7 +53,7 @@ bool Parser::statementListPending() {
 bool Parser::statementPending() {
     return (variableInitPending() || assignmentPending() || fxnDeclarationPending()
         || fxnCallPending() || conditionalPending() || loopPending() || returnStatementPending())
-        || commentPending() || lineEndPending();
+        || commentPending() || lineEndPending() || binaryExpressionPending() || unaryExpressionPending();
 }
 
 bool Parser::variableInitPending() {
@@ -190,7 +190,7 @@ Lexeme* Parser::statementList() {
 
 Lexeme* Parser::statement() {
     if (variableInitPending() || assignmentPending() || fxnDeclarationPending() || fxnCallPending() ||
-        conditionalPending() || loopPending() || returnStatementPending()) {
+        conditionalPending() || loopPending() || returnStatementPending() || binaryExpressionPending() || unaryExpressionPending()) {
         Lexeme *statement = nullptr;
         if (variableInitPending()) statement = variableInit();
         else if (assignmentPending()) statement = assignment();
@@ -199,6 +199,8 @@ Lexeme* Parser::statement() {
         else if (conditionalPending()) statement = conditional();
         else if (loopPending()) statement = loop();
         else if (returnStatementPending()) statement = returnStatement();
+        else if (binaryExpressionPending()) statement = binaryExpression();
+        else if (unaryExpressionPending()) statement = unaryExpression();
         if (!conditionalPending() && !loopPending()) lineEnd();
         if (commentPending()) comment();
         return statement;

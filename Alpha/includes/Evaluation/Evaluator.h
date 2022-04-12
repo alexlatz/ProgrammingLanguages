@@ -25,6 +25,10 @@ class Evaluator {
         Lexeme* evalAnd(Lexeme* tree, Environment& env);
         Lexeme* evalOr(Lexeme* tree, Environment& env);
         Lexeme* evalNot(Lexeme* tree, Environment& env);
+        Lexeme* evalBe(Lexeme* tree, Environment& env);
+        Lexeme* evalLet(Lexeme* tree, Environment& env);
+        Lexeme* evalCondition(Lexeme* tree, Environment& env);
+        Lexeme* evalElse(Lexeme* tree, Environment& env);
 };
 
 #endif //PROGRAMMINGLANGUAGES_EVALUATOR_H

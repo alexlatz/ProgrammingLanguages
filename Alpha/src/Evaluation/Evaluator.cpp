@@ -18,13 +18,12 @@ Lexeme* Evaluator::eval(Lexeme* tree, Environment& env) {
         case RETURN:
             break;
         case IF:
-            break;
         case ELIF:
-            break;
+            return evalCondition(tree, env);
         case ELSE:
-            break;
+            return evalElse(tree, env);
         case LET:
-            break;
+            return evalLet(tree, env);
         case FXN:
             break;
         case FOR:
@@ -34,22 +33,22 @@ Lexeme* Evaluator::eval(Lexeme* tree, Environment& env) {
         case IN:
             break;
         case BE:
-            break;
+            return evalBe(tree, env);
         case ADD:
+        case ADDBE:
             return evalAdd(tree, env);
         case SUB:
+        case SUBBE:
             return evalSub(tree, env);
         case X:
+        case XBE:
             return evalX(tree, env);
         case DIV:
+        case DIVBE:
             return evalDiv(tree, env);
         case MOD:
-            return evalMod(tree, env);
-        case ADDBE:
-        case SUBBE:
-        case XBE:
-        case DIVBE:
         case MODBE:
+            return evalMod(tree, env);
         case IS:
             return evalIs(tree, env);
         case LESS:
@@ -374,6 +373,37 @@ Lexeme *Evaluator::evalStatementList(Lexeme* tree, Environment& env) {
         statementList->setChild(eval(tree->getChild(i), env));
     }
     return statementList;
+}
+
+Lexeme* Evaluator::evalBe(Lexeme* tree, Environment& env) {
+    Lexeme* first = tree->getChild(0);
+    Lexeme* second = eval(tree->getChild(1), env);
+    env.modifySymbol(boost::get<string>(first->getValue()), second);
+    return second;
+}
+
+Lexeme* Evaluator::evalLet(Lexeme* tree, Environment& env) {
+    Lexeme* first = tree->getChild(0);
+    env.addSymbol(boost::get<string>(first->getChild(0)->getValue()), first);
+    Lexeme* second = eval(tree->getChild(0), env);
+    return second;
+}
+
+Lexeme* Evaluator::evalCondition(Lexeme* tree, Environment& env) {
+    Lexeme* conditionLex = eval(tree->getChild(0), env);
+    bool condition = boost::get<bool>(conditionLex->getValue());
+    if (condition) {
+        Environment newEnv(&env);
+        return eval(tree->getChild(1), newEnv);
+    } else if (tree->getChildrenLength() > 2) {
+        return eval(tree->getChild(2), env);
+    }
+    return conditionLex;
+}
+
+Lexeme* Evaluator::evalElse(Lexeme* tree, Environment& env) {
+    Environment newEnv(&env);
+    return eval(tree->getChild(0), newEnv);
 }
 
 
