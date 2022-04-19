@@ -1,7 +1,7 @@
 let y be one
-if Cy is oneD L
+if Cy is twoD L
     y addbe three
-J elif Cy is fourD L
+J elif Cy is threeD L
     y addbe two
 J else L
     y subbe one

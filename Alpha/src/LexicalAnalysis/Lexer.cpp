@@ -219,10 +219,7 @@ Lexeme* Lexer::lexNumber(string& firstWord) {
         if (!validMultiChar(c)) fullInput++;
         if (!nextWord.empty() && (Lexer::digits.count(nextWord) > 0 || nextWord == "point")) {
             if (nextWord != "point" && !pointMode) words.push_back(nextWord);
-            else if (!pointMode) {
-                pointMode = true;
-                decimals.push_back(nextWord);
-            }
+            else if (!pointMode) pointMode = true;
             else decimals.push_back(nextWord);
             fullInput = 1;
         }

@@ -27,9 +27,9 @@ Lexeme* Evaluator::eval(Lexeme* tree, Environment& env) {
         case FXN:
             break;
         case FOR:
-            break;
+            return evalFor(tree, env);
         case WHILE:
-            break;
+            return evalWhile(tree, env);
         case IN:
             break;
         case BE:
@@ -60,9 +60,9 @@ Lexeme* Evaluator::eval(Lexeme* tree, Environment& env) {
         case MOREIS:
             return evalMoreis(tree, env);
         case INC:
-            break;
+            return evalInc(tree, env);
         case DEC:
-            break;
+            return evalDec(tree, env);
         case AND:
             return evalAnd(tree, env);
         case OR:
@@ -367,6 +367,38 @@ bool Evaluator::evalBoolVal(Lexeme* tree) {
     else return false;
 }
 
+Lexeme* Evaluator::evalInc(Lexeme* tree, Environment& env) {
+    Lexeme* first = eval(tree->getChild(0), env);
+    if (first->getType() == TokenType::NUMBER) {
+        Lexeme* value = new Lexeme(TokenType::NUMBER, tree->getLineNum(), boost::get<double>(first->getValue()) + 1);
+        env.modifySymbol(boost::get<string>(tree->getChild(0)->getValue()), value);
+        return value;
+    }
+    else if (first->getType() == TokenType::STRING) {
+        string val = boost::get<string>(first->getValue());
+        Lexeme* value =  new Lexeme(TokenType::STRING, tree->getLineNum(), val + " ");
+        env.modifySymbol(boost::get<string>(tree->getChild(0)->getValue()), value);
+        return value;
+    }
+    else Alpha::runtimeError(*tree, "Evaluating: Invalid operand to inc expression");
+}
+
+Lexeme* Evaluator::evalDec(Lexeme* tree, Environment& env) {
+    Lexeme* first = eval(tree->getChild(0), env);
+    if (first->getType() == TokenType::NUMBER) {
+        Lexeme* value = new Lexeme(TokenType::NUMBER, tree->getLineNum(), boost::get<double>(first->getValue()) - 1);
+        env.modifySymbol(boost::get<string>(tree->getChild(0)->getValue()), value);
+        return value;
+    }
+    else if (first->getType() == TokenType::STRING) {
+        string val = boost::get<string>(first->getValue());
+        Lexeme* value = new Lexeme(TokenType::STRING, tree->getLineNum(), val.substr(0, val.size()-1));
+        env.modifySymbol(boost::get<string>(tree->getChild(0)->getValue()), value);
+        return value;
+    }
+    else Alpha::runtimeError(*tree, "Evaluating: Invalid operand to dec expression");
+}
+
 Lexeme *Evaluator::evalStatementList(Lexeme* tree, Environment& env) {
     Lexeme* statementList = new Lexeme(TokenType::STATEMENTLIST, 0);
     for (int i = 0; i < tree->getChildrenLength(); i++) {
@@ -404,6 +436,34 @@ Lexeme* Evaluator::evalCondition(Lexeme* tree, Environment& env) {
 Lexeme* Evaluator::evalElse(Lexeme* tree, Environment& env) {
     Environment newEnv(&env);
     return eval(tree->getChild(0), newEnv);
+}
+
+Lexeme* Evaluator::evalFor(Lexeme* tree, Environment& env) {
+    Environment newEnv(&env);
+    Lexeme* body = eval(tree->getChild(0), newEnv);
+    if (tree->getChild(1)->getType() != TokenType::IN) {
+        bool condition = boost::get<bool>(eval(tree->getChild(1), newEnv)->getValue());
+        while (condition) {
+            Environment newerEnv(&newEnv);
+            body = eval(tree->getChild(3), newerEnv);
+            eval(tree->getChild(2), newEnv);
+            Lexeme* result = eval(tree->getChild(1), newEnv);
+            condition = boost::get<bool>(result->getValue());
+        }
+        return body;
+    }
+    //TODO: arrays
+}
+
+Lexeme* Evaluator::evalWhile(Lexeme* tree, Environment& env) {
+    Environment newEnv(&env);
+    bool condition = boost::get<bool>(eval(tree->getChild(0), newEnv)->getValue());
+    Lexeme* body;
+    while (condition) {
+        body = eval(tree->getChild(1), newEnv);
+        condition = boost::get<bool>(eval(tree->getChild(0), newEnv)->getValue());
+    }
+    return body;
 }
 
 

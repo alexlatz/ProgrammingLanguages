@@ -29,6 +29,7 @@ void Alpha::run(ifstream* file) {
     Environment global(nullptr);
     Evaluator eval;
     cout << *eval.eval(lex, global) << endl;
+    global.printSymbols();
 }
 
 void Alpha::syntaxError(int lineNumber, string where, string message) {

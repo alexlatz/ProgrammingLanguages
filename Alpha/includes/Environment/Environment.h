@@ -26,6 +26,7 @@ class Environment {
         bool softLookup(const string& name, int lineNum);
         void addSymbol(const string& name, Lexeme* symbol);
         void modifySymbol(const string& name, Lexeme* newSymbol);
+        void printSymbols();
 };
 
 ostream& operator<<(ostream& stream, const Lexeme& lexeme);

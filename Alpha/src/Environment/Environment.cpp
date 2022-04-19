@@ -31,6 +31,13 @@ void Environment::addSymbol(const string& name, Lexeme *symbol) {
 void Environment::modifySymbol(const string& name, Lexeme *newSymbol) {
     if (this->symbols.count(name) > 0) {
         this->symbols.erase(name);
-        this->symbols.insert(pair<string, Lexeme*>(name, newSymbol));
-    } else Alpha::runtimeError(*newSymbol, "Environment: variable has not been declared");
+        this->symbols.insert(pair<string, Lexeme *>(name, newSymbol));
+    } else if (this->parent != nullptr) this->parent->modifySymbol(name, newSymbol);
+    else Alpha::runtimeError(*newSymbol, "Environment: variable has not been declared");
+}
+
+void Environment::printSymbols() {
+    for (pair<string, Lexeme*> p : this->symbols) {
+        cout << p.first << ", " << *(p.second) << endl;
+    }
 }

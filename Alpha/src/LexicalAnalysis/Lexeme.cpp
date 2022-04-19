@@ -71,7 +71,7 @@ void Lexeme::setChild(Lexeme* child) {
 
 Lexeme *Lexeme::getChild(int index) {
     if (index < this->children.size() && index >= 0) return this->children[index];
-    else Alpha::runtimeError(0, "Parsing child", "Child not found at index " + to_string(index));
+    else Alpha::runtimeError(0, "Accessing child", "Child not found at index " + to_string(index));
     return nullptr;
 }
 
@@ -80,8 +80,8 @@ ostream& Lexeme::printLexemeValue(ostream& stream, Lexeme& lexeme) {
     if (lexeme.getType() == TokenType::STRING) stream << boost::get<string>(lexeme.value);
     else if (lexeme.getType() == TokenType::CHAR) stream << (boost::get<char>(lexeme.value));
     else if (lexeme.getType() == TokenType::BOOL) stream << (boost::get<bool>(lexeme.value) ? "true" : "false");
-    else if (lexeme.getType() == TokenType::NUMBER) stream << ((boost::get<double>(lexeme.value) == 0) ? "\"\"" : to_string(boost::get<double>(lexeme.value)));
-    else stream << lexeme.value;
+    else if (lexeme.getType() == TokenType::NUMBER) stream << ((boost::get<double>(lexeme.value) == 0) ? "0" : to_string(boost::get<double>(lexeme.value)));
+    else stream << "\"\"";
     stream << ")";
     return stream;
 }

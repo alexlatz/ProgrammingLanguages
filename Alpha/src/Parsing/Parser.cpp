@@ -261,7 +261,7 @@ Lexeme* Parser::conditional() {
     op->setChild(block());
     if (check(TokenType::ELIF) || check(TokenType::ELSE)) {
         Lexeme* ending = elifOrElse();
-        if (ending != nullptr) op->setChild(elifOrElse());
+        if (ending != nullptr) op->setChild(ending);
     }
     return op;
 }
