@@ -101,12 +101,14 @@ bool Parser::whileLoopPending() {
 }
 
 bool Parser::primaryPending() {
-    return check(TokenType::BOOL) || check(TokenType::NUMBER) || check(TokenType::STRING) || check(TokenType::CHAR) || collectionGetPending() || parenthesizedExpressionPending() || fxnCallPending() || check(TokenType::IDENTIFIER);
+    return check(TokenType::BOOL) || check(TokenType::NUMBER) || check(TokenType::STRING) || check(TokenType::CHAR) /*collectionGetPending()*/ || parenthesizedExpressionPending() || fxnCallPending() || check(TokenType::IDENTIFIER);
 }
 
+/*
 bool Parser::collectionGetPending() {
     return check(TokenType::IDENTIFIER) && checkNext(TokenType::OPEN_SQ_BRACKET);
 }
+ */
 
 bool Parser::parenthesizedExpressionPending() {
     //not looking one into the future because it would require
@@ -220,14 +222,20 @@ Lexeme* Parser::variableInit() {
         Lexeme* be = assignment();
         let->setChild(be);
     }
+    /*
     else if (check(TokenType::IDENTIFIER)) {
-        let->setChild(consume(TokenType::IDENTIFIER));
+        Lexeme *id = consume(TokenType::IDENTIFIER);
+        let->setChild(id);
         if (check(TokenType::OPEN_SQ_BRACKET)) {
             consume(TokenType::OPEN_SQ_BRACKET);
-            let->setChild(consume(TokenType::NUMBER));
+            Lexeme *num = consume(TokenType::NUMBER);
+            let->setChild(new Lexeme(TokenType::COLLECTION, id->getLineNum(), num->getValue()));
+            let->getChild(1)->setChildSize((int) floor(boost::get<double>(num->getValue())));
             consume(TokenType::CLOSE_SQ_BRACKET);
         }
-    }
+        */
+    else if (primaryPending()) let->setChild(primary());
+    else Alpha::runtimeError(*let, "Parsing: expected identifier or assignment");
     return let;
 }
 
@@ -461,7 +469,7 @@ Lexeme* Parser::primary() {
     else if (check(TokenType::BOOL)) return consume(TokenType::BOOL);
     else if (check(TokenType::STRING)) return consume(TokenType::STRING);
     else if (check(TokenType::CHAR)) return consume(TokenType::CHAR);
-    else if (collectionGetPending()) return collectionGet();
+    //else if (collectionGetPending()) return collectionGet();
     else if (fxnCallPending()) return fxnCall();
     else if (parenthesizedExpressionPending()) return parenthesizedExpression();
     else if (check(TokenType::IDENTIFIER)) return consume(TokenType::IDENTIFIER);
@@ -469,6 +477,7 @@ Lexeme* Parser::primary() {
     return nullptr;
 }
 
+/*
 Lexeme* Parser::collectionGet() {
     Lexeme* collection = consume(TokenType::IDENTIFIER);
     consume(TokenType::OPEN_SQ_BRACKET);
@@ -476,6 +485,7 @@ Lexeme* Parser::collectionGet() {
     consume(TokenType::CLOSE_SQ_BRACKET);
     return collection;
 }
+ */
 
 Lexeme* Parser::parenthesizedExpression() {
     consume(TokenType::OPEN_PAREN);

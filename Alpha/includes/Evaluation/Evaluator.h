@@ -39,6 +39,7 @@ class Evaluator {
         Lexeme* evalFxn(Lexeme* tree, Environment& env);
         Lexeme* evalFxnCall(Lexeme* tree, Environment& env);
         Lexeme* evalReturn(Lexeme* tree, Environment& env);
+        Lexeme* evalCollectionGet(Lexeme* tree, Environment& env);
 };
 
 #endif //PROGRAMMINGLANGUAGES_EVALUATOR_H

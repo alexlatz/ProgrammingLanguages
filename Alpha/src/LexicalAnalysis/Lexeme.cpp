@@ -27,6 +27,10 @@ Lexeme::Lexeme(TokenType type, int lineNum, bool value) : Lexeme(type, lineNum) 
     this->value = value;
 }
 
+Lexeme::Lexeme(TokenType type, int lineNum, boost::variant<double, string, char, bool> value) : Lexeme(type, lineNum) {
+    this->value = value;
+}
+
 void Lexeme::setType(TokenType type) {
     this->type = type;
 }
@@ -75,6 +79,14 @@ Lexeme *Lexeme::getChild(int index) {
     return nullptr;
 }
 
+void Lexeme::setValue(boost::variant<double, string, char, bool> val) {
+    this->value = val;
+}
+
+void Lexeme::setChildSize(int size) {
+    this->children.resize(size);
+}
+
 ostream& Lexeme::printLexemeValue(ostream& stream, Lexeme& lexeme) {
     stream << "(" << "Type: " << tokenName.at(lexeme.type) << ", " << lexeme.lineNum << ", ";
     if (lexeme.getType() == TokenType::STRING) stream << boost::get<string>(lexeme.value);
@@ -99,4 +111,13 @@ ostream& Lexeme::printLexeme(ostream& stream, Lexeme& lex, int i) {
         }
     }
     return stream;
+}
+
+string Lexeme::toStringValue(Lexeme lexeme) {
+    string s = "";
+    if (lexeme.getType() == TokenType::STRING) s = boost::get<string>(lexeme.value);
+    else if (lexeme.getType() == TokenType::CHAR) s = (boost::get<char>(lexeme.value));
+    else if (lexeme.getType() == TokenType::BOOL) s = (boost::get<bool>(lexeme.value) ? "true" : "false");
+    else if (lexeme.getType() == TokenType::NUMBER) s = ((boost::get<double>(lexeme.value) == 0) ? "0" : to_string(boost::get<double>(lexeme.value)));
+    return s;
 }

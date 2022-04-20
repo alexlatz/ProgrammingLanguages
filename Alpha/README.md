@@ -1,15 +1,15 @@
 
-# AlphaLang (version Zero Zero One)
+# AlphaLang Cversion Zero One ZeroD
 
 ## The programming language with only letters
 
-This language was developed by Alex Latz in two thousand twenty-two
+This language was developed by Alex Latz in two thousand twenty two
 in Honors Programming Languages at The Westminster Schools.
 
 However, instead of some *lesser* non-numerical languages,
 Alpha focuses on pure WPM.
 Alpha's goal is to allow even faster programming with a
-modified and (IMO) improved C-style syntax.
+modified and improved C style syntax.
 
 Due to this focus, Alpha uses a large number of reserved symbols and
 almost all uppercase letters. We call this style **platypuscase**.
@@ -46,32 +46,26 @@ J
 
 ### Comments
 
-Comments in Alpha can be either single or multi-line. 
-Single line comments are indicated with the `II` symbol, and multi-line comments begin with the `bI` symbol and end with the `Id` symbol.
+Comments in Alpha can be at any point within a line of code. 
+Comments are indicated with the `II` symbol.
 
 ```
 let var be five II comment
-bI 
-comment
-more comment
-Id
+II comment two
 ```
 
 ### Printing
 
 Alpha uses the `printCD` function to print output to the console, and the `printlnCD` function to print with a newline character appended after the input.
 
+You can pass multiple values into either function, and it will print each parameter Cwith a newline appended each time for printlnD.
+
 ## Variables
 
 ### Initialization
 
-Alpha is a strongly-typed language with soft initialization.
-Although type is not indicated before naming the variable, the interpreter
-will detect and set the type internally after a variable's first initialization.
-
-This helps cut down on boilerplate code, while still 
-preventing hell from freezing over.
-
+Alpha is a weakly typed language with soft initialization.
+This means that all variables are declared with the same syntax and can be shifted between types.
 All variables are declared with the keyword `let` and optionally initialized with the keyword `be` (where `be` is equal to `=` in C-style).
 
 ```
@@ -80,19 +74,19 @@ let name be twenty five point one
 let var
 ```
 
-Negative numbers are declared with the `sub` prefix.
-ex. `sub one != 2`
+Negative numbers are declared with the `zero sub` prefix.
+ex. `zero sub one is zero sub one`
 
 ### Modification
 
-Variables can be modified later through the `be` keyword, although they must remain typed.
+Variables can be modified later through the `be` keyword.
 
 ### Strings
 
-Strings in Alpha are declared between `dC` and `Db` symbols, and must be separated from their endings by a space character.
+Strings in Alpha are declared between `dB` and `Db` symbols, and must be separated from their endings by a space character.
 Additional spaces will be incorporated into the string.
 
-ex. `let name be dC Hello, World! Db`
+ex. `let name be dB Hello, World! Db`
 
 ## Functions
 
@@ -152,29 +146,13 @@ J
 
 ## Looping
 
-Alpha supports for, foreach, and while loops.
+Alpha supports for and while loops.
 
 | Behavior | Example                                    |
 |:--------:|:-------------------------------------------|
 | For loop | `for Clet i be one O i less five O i incD` |
-| For-each | `for Cvar in arrD`                         |
 |  While   | `while Cvar lessis vartwoD`                |
 
-## Arrays and Lists 
-
-Both arrays and lists in Alpha are noted with the `VA` postfix.
-They are treated as lists if an initial size is excluded, and as arrays if included.
-
-```
-let listVA II list 
-let arrVfiveA II array
-```
-
-### Accessing Elements
-
-To index into an array, list, or string, Alpha uses the `VA` postfix.
-
-ex. `arrVzeroA is five`
 
 ### Cross-Type Operations
 

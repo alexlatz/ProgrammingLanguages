@@ -75,11 +75,13 @@ Lexeme* Evaluator::eval(Lexeme* tree, Environment& env) {
             Alpha::runtimeError(*tree, "Evaluating: Invalid lexeme type");
             return nullptr;
     }
+    Alpha::runtimeError(*tree, "Evaluating: Invalid lexeme type");
+    return nullptr;
 }
 
 Lexeme* Evaluator::eval(Lexeme* tree, Environment& env, TokenType caller) {
     if (tree->getType() == TokenType::STATEMENTLIST) return evalStatementList(tree, env, caller);
-    else eval(tree, env);
+    else return eval(tree, env);
 }
 
 Lexeme *Evaluator::evalAdd(Lexeme *tree, Environment &env) {
@@ -427,9 +429,20 @@ Lexeme* Evaluator::evalBe(Lexeme* tree, Environment& env) {
 
 Lexeme* Evaluator::evalLet(Lexeme* tree, Environment& env) {
     Lexeme* first = tree->getChild(0);
-    env.addSymbol(boost::get<string>(first->getChild(0)->getValue()), first);
-    Lexeme* second = eval(tree->getChild(0), env);
-    return second;
+    if (first->getType() == TokenType::BE) {
+        env.addSymbol(boost::get<string>(first->getChild(0)->getValue()), first);
+        Lexeme *second = eval(tree->getChild(0), env);
+        return second;
+    } else {
+        env.addSymbol(boost::get<string>(first->getValue()), new Lexeme(TokenType::NOT, tree->getLineNum(), boost::get<string>(first->getValue())));
+        return first;
+    }
+        /*
+    } else if (first->getType() == TokenType::IDENTIFIER) {
+        env.addSymbol(boost::get<string>(first->getValue()), tree->getChild(1));
+        return tree->getChild(1);
+    }
+         */
 }
 
 Lexeme* Evaluator::evalCondition(Lexeme* tree, Environment& env) {
@@ -463,7 +476,6 @@ Lexeme* Evaluator::evalFor(Lexeme* tree, Environment& env) {
         }
         return body;
     }
-    //TODO: arrays
 }
 
 Lexeme* Evaluator::evalWhile(Lexeme* tree, Environment& env) {
@@ -478,7 +490,12 @@ Lexeme* Evaluator::evalWhile(Lexeme* tree, Environment& env) {
 }
 
 Lexeme* Evaluator::evalIdentifier(Lexeme* tree, Environment& env) {
-    if (tree->getChildrenLength() == 0) return env.lookup(boost::get<string>(tree->getValue()), tree->getLineNum());
+    if (tree->getChildrenLength() == 0) {
+        Lexeme* result = env.lookup(boost::get<string>(tree->getValue()), tree->getLineNum());
+        if (result != nullptr) return result;
+        else Alpha::runtimeError(*tree, "Evaluating: Null Result");
+    }
+    //else if (tree->getChild(0)->getType() == TokenType::NUMBER) return evalCollectionGet(tree, env);
     else return evalFxnCall(tree, env);
 };
 
@@ -490,6 +507,14 @@ Lexeme* Evaluator::evalFxn(Lexeme *tree, Environment &env) {
 
 Lexeme* Evaluator::evalFxnCall(Lexeme *tree, Environment &env) {
     string name = boost::get<string>(tree->getValue());
+    if (name == "print" || name == "println") {
+        Lexeme* list = tree->getChild(0);
+        for (int i = 0; i < list->getChildrenLength(); i++) {
+            if (name == "print") cout << Lexeme::toStringValue(*eval(list->getChild(i), env));
+            else if (name == "println") cout << Lexeme::toStringValue(*eval(list->getChild(i), env)) << endl;
+        }
+        return tree;
+    }
     Lexeme* function = env.lookup(name, tree->getLineNum());
     if (function->getChild(1)->getChildrenLength() == tree->getChild(0)->getChildrenLength()) {
         Environment fxnEnv(&env);
@@ -511,5 +536,17 @@ Lexeme* Evaluator::evalReturn(Lexeme *tree, Environment &env) {
     return rtrn;
 }
 
-
-
+/*
+Lexeme* Evaluator::evalCollectionGet(Lexeme *tree, Environment &env) {
+    Lexeme* coll = env.lookup(boost::get<string>(tree->getValue()), tree->getLineNum());
+    int num = (int)floor(boost::get<double>(tree->getChild(0)->getValue()));
+    int size = (int)floor(boost::get<double>(coll->getChild(0)->getValue()));
+    if (num < size) {
+        Lexeme* child = coll->getChild(num);
+        if (child == nullptr) Alpha::runtimeError(*coll, "Evaluating: array index not set");
+        return child;
+    }
+    else Alpha::runtimeError(*coll, "Evaluating: array index out of bounds");
+    return nullptr;
+}
+ */

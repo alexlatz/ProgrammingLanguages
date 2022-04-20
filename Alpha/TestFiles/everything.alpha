@@ -2,14 +2,16 @@ let a be two million three hundred fifty five thousand one hundred thirteen
 
 let b
 
-fxn testfxnCa bD L
+fxn testfxnCaI bD L
     rtrn b
 J
 
-testfxnCb aD
+b be two
 
-for Clet c be two millionO c more two million tenO c incD L
-    printCdB test DbD
+testfxnCbI aD
+
+for Clet c be two millionO c less two million tenO c incD L
+    printlnCdB test DbD
 J
 
 let d be true
@@ -17,6 +19,6 @@ while Cd and not falseD L
     d be false
 J
 
-if Cnot dD L
-J elif Cnot CdB test Db is dB test DbDD L J
+if CdD L
+J elif CdB test Db is dB test DbD L printC dB elif DbD J
 else printCdB end DbD

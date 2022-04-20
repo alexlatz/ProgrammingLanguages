@@ -25,7 +25,8 @@ bool Environment::softLookup(const string& name, int lineNum) {
 
 void Environment::addSymbol(const string& name, Lexeme *symbol) {
     if (this->symbols.count(name) == 0) this->symbols.insert(pair<string, Lexeme*>(name, symbol));
-    else Alpha::runtimeError(*symbol, "Environment: variable already declared");
+    else if (symbol != nullptr) Alpha::runtimeError(*symbol, "Environment: variable already declared");
+
 }
 
 void Environment::modifySymbol(const string& name, Lexeme *newSymbol) {

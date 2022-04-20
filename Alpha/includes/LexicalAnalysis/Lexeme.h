@@ -62,6 +62,7 @@ public:
     Lexeme(TokenType type, int lineNum, string value);
     Lexeme(TokenType type, int lineNum, char value);
     Lexeme(TokenType type, int lineNum, bool value);
+    Lexeme(TokenType type, int lineNum, boost::variant<double, string, char, bool> value);
     Lexeme(TokenType type, int lineNum);
     string toString();
     void setType(TokenType type);
@@ -73,6 +74,9 @@ public:
     void setChild(Lexeme* child);
     Lexeme* getChild(int index);
     boost::variant<double, string, char, bool> getValue();
+    void setValue(boost::variant<double, string, char, bool> val);
+    void setChildSize(int size);
+    static string toStringValue(Lexeme lexeme);
 };
 
 //needed to redefine the operator (can't do it inside a class, but I want access to private variables)
