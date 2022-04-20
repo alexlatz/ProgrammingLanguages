@@ -14,7 +14,7 @@
 using namespace std;
 static vector<string> tokenName = {"NUMBER", "BOOL", "STRING", "CHAR", "COLLECTION", "IDENTIFIER",
                                    "OPEN_PAREN", "CLOSE_PAREN", "OPEN_BLOCK", "CLOSE_BLOCK",
-                                   "LINE_END", "COMMENT_LINEEND", "OPEN_SQ_BRACKET", "CLOSE_SQ_BRACKET",
+                                   "DELIMITER", "LINE_END", "COMMENT_LINEEND", "OPEN_SQ_BRACKET", "CLOSE_SQ_BRACKET",
                                    "STR_OPEN", "STR_CLOSE", "CHAR_OPEN", "CHAR_CLOSE",
                                    "RETURN", "IF", "ELIF", "ELSE", "POINT", "LET", "FXN", "FOR", "WHILE", "IN",
                                    "BE", "ADD", "SUB", "X", "DIV",
@@ -27,7 +27,7 @@ enum TokenType {
     NUMBER, BOOL, STRING, CHAR, COLLECTION, IDENTIFIER,
     //symbols
     OPEN_PAREN, CLOSE_PAREN, OPEN_BLOCK, CLOSE_BLOCK,
-    LINE_END, COMMENT_LINEEND, OPEN_SQ_BRACKET, CLOSE_SQ_BRACKET,
+    DELIMITER, LINE_END, COMMENT_LINEEND, OPEN_SQ_BRACKET, CLOSE_SQ_BRACKET,
     STR_OPEN, STR_CLOSE, CHAR_OPEN, CHAR_CLOSE,
     //keywords
     RETURN, IF, ELIF, ELSE, POINT, LET, FXN, FOR, WHILE, IN,

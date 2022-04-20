@@ -29,6 +29,7 @@ void Alpha::run(ifstream* file) {
     Environment global(nullptr);
     Evaluator eval;
     cout << *eval.eval(lex, global) << endl;
+    cout << "PRINTING GLOBAL ENV" << endl;
     global.printSymbols();
 }
 

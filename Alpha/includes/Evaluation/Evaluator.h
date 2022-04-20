@@ -8,10 +8,12 @@
 #include "../Environment/Environment.h"
 
 class Evaluator {
+    vector<pair<string, Lexeme*> > convertParameterList(Lexeme* tree);
     public:
         bool evalBoolVal(Lexeme* tree);
         Lexeme* eval(Lexeme* tree, Environment& env);
-        Lexeme* evalStatementList(Lexeme* tree, Environment& env);
+        Lexeme* eval(Lexeme* tree, Environment& env, TokenType caller);
+        Lexeme* evalStatementList(Lexeme* tree, Environment& env, TokenType caller);
         Lexeme* evalAdd(Lexeme* tree, Environment& env);
         Lexeme* evalSub(Lexeme* tree, Environment& env);
         Lexeme* evalX(Lexeme* tree, Environment& env);
@@ -33,6 +35,10 @@ class Evaluator {
         Lexeme* evalDec(Lexeme* tree, Environment& env);
         Lexeme* evalFor(Lexeme* tree, Environment& env);
         Lexeme* evalWhile(Lexeme* tree, Environment& env);
+        Lexeme* evalIdentifier(Lexeme* tree, Environment& env);
+        Lexeme* evalFxn(Lexeme* tree, Environment& env);
+        Lexeme* evalFxnCall(Lexeme* tree, Environment& env);
+        Lexeme* evalReturn(Lexeme* tree, Environment& env);
 };
 
 #endif //PROGRAMMINGLANGUAGES_EVALUATOR_H

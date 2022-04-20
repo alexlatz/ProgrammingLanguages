@@ -11,7 +11,7 @@ Parser::Parser(vector<Lexeme *>& lexemes) : lexemes(lexemes) {
 Lexeme* Parser::consume(TokenType type) {
     Lexeme* lex = *it;
     if (check(type) && it != lexemes.end()) it++;
-    else Alpha::runtimeError((*it)->getLineNum(), "recognizing", "Expected " + tokenName[(*it)->getType()]);
+    else Alpha::runtimeError((*it)->getLineNum(), "recognizing", "Expected " + tokenName[type] + ", got " + tokenName[(*it)->getType()]);
     return lex;
 }
 
@@ -101,7 +101,7 @@ bool Parser::whileLoopPending() {
 }
 
 bool Parser::primaryPending() {
-    return check(TokenType::BOOL) || check(TokenType::NUMBER) || check(TokenType::STRING) || check(TokenType::CHAR) || collectionGetPending() || parenthesizedExpressionPending() || check(TokenType::IDENTIFIER);
+    return check(TokenType::BOOL) || check(TokenType::NUMBER) || check(TokenType::STRING) || check(TokenType::CHAR) || collectionGetPending() || parenthesizedExpressionPending() || fxnCallPending() || check(TokenType::IDENTIFIER);
 }
 
 bool Parser::collectionGetPending() {
@@ -123,7 +123,11 @@ bool Parser::unaryExpressionPending() {
 }
 
 bool Parser::parameterPending() {
-    return !binaryExpressionPending() && !unaryExpressionPending() && primaryPending();
+    return primaryPending();
+}
+
+bool Parser::parameterDeclarePending() {
+    return !binaryExpressionPending() && !unaryExpressionPending() && check(TokenType::IDENTIFIER);
 }
 
 bool Parser::booleanOperandPending() {
@@ -201,7 +205,7 @@ Lexeme* Parser::statement() {
         else if (returnStatementPending()) statement = returnStatement();
         else if (binaryExpressionPending()) statement = binaryExpression();
         else if (unaryExpressionPending()) statement = unaryExpression();
-        if (!conditionalPending() && !loopPending()) lineEnd();
+        if (!conditionalPending() && !loopPending() && check(TokenType::LINE_END)) lineEnd();
         if (commentPending()) comment();
         return statement;
     } else if (commentPending()) comment();
@@ -239,7 +243,7 @@ Lexeme* Parser::fxnDeclaration() {
     Lexeme* fxn = consume(TokenType::FXN);
     fxn->setChild(consume(TokenType::IDENTIFIER));
     consume(TokenType::OPEN_PAREN);
-    fxn->setChild(parameter());
+    fxn->setChild(parameterDeclare());
     consume(TokenType::CLOSE_PAREN);
     fxn->setChild(block());
     return fxn;
@@ -312,7 +316,7 @@ Lexeme* Parser::loop() {
 
 Lexeme* Parser::returnStatement() {
     Lexeme* rtrn = consume(TokenType::RETURN);
-    rtrn->setChild(primary());
+    rtrn->setChild(expression());
     return rtrn;
 }
 
@@ -370,6 +374,16 @@ Lexeme* Parser::parameter() {
     auto* list = new Lexeme(TokenType::PARAMETERLIST, 0);
     while (parameterPending()) {
         list->setChild(primary());
+        if (check(TokenType::DELIMITER)) consume(TokenType::DELIMITER);
+    }
+    return list;
+}
+
+Lexeme* Parser::parameterDeclare() {
+    auto* list = new Lexeme(TokenType::PARAMETERLIST, 0);
+    while (parameterDeclarePending()) {
+        list->setChild(consume(TokenType::IDENTIFIER));
+        if (check(TokenType::DELIMITER)) consume(TokenType::DELIMITER);
     }
     return list;
 }
@@ -448,6 +462,7 @@ Lexeme* Parser::primary() {
     else if (check(TokenType::STRING)) return consume(TokenType::STRING);
     else if (check(TokenType::CHAR)) return consume(TokenType::CHAR);
     else if (collectionGetPending()) return collectionGet();
+    else if (fxnCallPending()) return fxnCall();
     else if (parenthesizedExpressionPending()) return parenthesizedExpression();
     else if (check(TokenType::IDENTIFIER)) return consume(TokenType::IDENTIFIER);
     Alpha::runtimeError(getLineNum(), "Parsing Primary", "Expected primary value");

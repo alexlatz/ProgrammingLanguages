@@ -37,6 +37,7 @@ class Parser {
     bool binaryExpressionPending();
     bool unaryExpressionPending();
     bool parameterPending();
+    bool parameterDeclarePending();
     bool booleanOperandPending();
     bool booleanBinaryExpPending();
     bool booleanUnaryExpPending();
@@ -60,6 +61,7 @@ class Parser {
     Lexeme* binaryOperator();
     Lexeme* unaryOperator();
     Lexeme* parameter();
+    Lexeme* parameterDeclare();
     Lexeme* block();
     Lexeme* condition();
     Lexeme* booleanOperand();

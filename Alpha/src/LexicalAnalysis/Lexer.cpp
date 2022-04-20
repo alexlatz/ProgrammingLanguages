@@ -9,6 +9,15 @@ Lexer::Lexer(ifstream* file) {
     this->lineNum = 1;
 }
 
+char Lexer::peek() {
+    char c = ' ';
+    if (!file->eof() && !file->fail()) {
+        file->get(c);
+        file->unget();
+    }
+    return c;
+}
+
 vector<Lexeme*> Lexer::lex() {
     vector<Lexeme*> vec;
     while (!file->eof() && !file->fail()) {
@@ -21,93 +30,94 @@ vector<Lexeme*> Lexer::lex() {
 }
 
 map<string, TokenType> Lexer::keywords {
-    {"C", TokenType::OPEN_PAREN},
-    {"D", TokenType::CLOSE_PAREN},
-    {"L", TokenType::OPEN_BLOCK},
-    {"J", TokenType::CLOSE_BLOCK},
-    {"O", TokenType::LINE_END},
-    {"II", TokenType::COMMENT_LINEEND},
-    {"V", TokenType::OPEN_SQ_BRACKET},
-    {"A", TokenType::CLOSE_SQ_BRACKET},
-    {"dB", TokenType::STR_OPEN},
-    {"Db", TokenType::STR_CLOSE},
-    {"dC", TokenType::CHAR_OPEN},
-    {"Dc", TokenType::CHAR_CLOSE},
-    {"rtrn", TokenType::RETURN},
-    {"if", TokenType::IF},
-    {"elif", TokenType::ELIF},
-    {"else", TokenType::ELSE},
-    {"point", TokenType::POINT},
-    {"let", TokenType::LET},
-    {"fxn", TokenType::FXN},
-    {"for", TokenType::FOR},
-    {"while", TokenType::WHILE},
-    {"in", TokenType::IN},
-    {"be", TokenType::BE},
-    {"add", TokenType::ADD},
-    {"sub", TokenType::SUB},
-    {"X", TokenType::X},
-    {"div", TokenType::DIV},
-    {"mod", TokenType::MOD},
-    {"addbe", TokenType::ADDBE},
-    {"subbe", TokenType::SUBBE},
-    {"Xbe", TokenType::XBE},
-    {"divbe", TokenType::DIVBE},
-    {"modbe", TokenType::MODBE},
-    {"inc", TokenType::INC},
-    {"dec", TokenType::DEC},
-    {"and", TokenType::AND},
-    {"or", TokenType::OR},
-    {"not", TokenType::NOT},
-    {"less", TokenType::LESS},
-    {"more", TokenType::MORE},
-    {"is", TokenType::IS},
-    {"lessis", TokenType::LESSIS},
-    {"moreis", TokenType::MOREIS},
+        {"C", TokenType::OPEN_PAREN},
+        {"D", TokenType::CLOSE_PAREN},
+        {"L", TokenType::OPEN_BLOCK},
+        {"J", TokenType::CLOSE_BLOCK},
+        {"I", TokenType::DELIMITER},
+        {"O", TokenType::LINE_END},
+        {"II", TokenType::COMMENT_LINEEND},
+        {"V", TokenType::OPEN_SQ_BRACKET},
+        {"A", TokenType::CLOSE_SQ_BRACKET},
+        {"dB", TokenType::STR_OPEN},
+        {"Db", TokenType::STR_CLOSE},
+        {"dC", TokenType::CHAR_OPEN},
+        {"Dc", TokenType::CHAR_CLOSE},
+        {"rtrn", TokenType::RETURN},
+        {"if", TokenType::IF},
+        {"elif", TokenType::ELIF},
+        {"else", TokenType::ELSE},
+        {"point", TokenType::POINT},
+        {"let", TokenType::LET},
+        {"fxn", TokenType::FXN},
+        {"for", TokenType::FOR},
+        {"while", TokenType::WHILE},
+        {"in", TokenType::IN},
+        {"be", TokenType::BE},
+        {"add", TokenType::ADD},
+        {"sub", TokenType::SUB},
+        {"X", TokenType::X},
+        {"div", TokenType::DIV},
+        {"mod", TokenType::MOD},
+        {"addbe", TokenType::ADDBE},
+        {"subbe", TokenType::SUBBE},
+        {"Xbe", TokenType::XBE},
+        {"divbe", TokenType::DIVBE},
+        {"modbe", TokenType::MODBE},
+        {"inc", TokenType::INC},
+        {"dec", TokenType::DEC},
+        {"and", TokenType::AND},
+        {"or", TokenType::OR},
+        {"not", TokenType::NOT},
+        {"less", TokenType::LESS},
+        {"more", TokenType::MORE},
+        {"is", TokenType::IS},
+        {"lessis", TokenType::LESSIS},
+        {"moreis", TokenType::MOREIS},
 };
 
 map<string, double> Lexer::digits {
-    {"zero", 0},
-    {"one", 1},
-    {"two", 2},
-    {"three", 3},
-    {"four", 4},
-    {"five", 5},
-    {"six", 6},
-    {"seven", 7},
-    {"eight", 8},
-    {"nine", 9},
-    {"ten", 10},
-    {"eleven", 11},
-    {"twelve", 12},
-    {"thirteen", 13},
-    {"fourteen", 14},
-    {"fifteen", 15},
-    {"sixteen", 16},
-    {"seventeen", 17},
-    {"eighteen", 18},
-    {"nineteen", 19},
-    {"twenty", 20},
-    {"thirty", 30},
-    {"forty", 40},
-    {"fifty", 50},
-    {"sixty", 60},
-    {"seventy", 70},
-    {"eighty", 80},
-    {"ninety", 90},
-    {"hundred", 100},
-    {"thousand", 1000},
-    {"million", 1000000},
-    {"billion", 1000000000},
-    {"trillion", 1000000000000},
-    {"quadrillion", 1000000000000000},
-    {"quintillion", 1000000000000000000},
-    {"sextillion", 1000000000000000000000.0},
-    {"septillion", 1000000000000000000000000.0},
-    {"octillion", 1000000000000000000000000000.0},
-    {"nonillion", 1000000000000000000000000000000.0},
-    {"decillion", 1000000000000000000000000000000000.0},
-    {"undecillion", 1000000000000000000000000000000000000.0},
+        {"zero", 0},
+        {"one", 1},
+        {"two", 2},
+        {"three", 3},
+        {"four", 4},
+        {"five", 5},
+        {"six", 6},
+        {"seven", 7},
+        {"eight", 8},
+        {"nine", 9},
+        {"ten", 10},
+        {"eleven", 11},
+        {"twelve", 12},
+        {"thirteen", 13},
+        {"fourteen", 14},
+        {"fifteen", 15},
+        {"sixteen", 16},
+        {"seventeen", 17},
+        {"eighteen", 18},
+        {"nineteen", 19},
+        {"twenty", 20},
+        {"thirty", 30},
+        {"forty", 40},
+        {"fifty", 50},
+        {"sixty", 60},
+        {"seventy", 70},
+        {"eighty", 80},
+        {"ninety", 90},
+        {"hundred", 100},
+        {"thousand", 1000},
+        {"million", 1000000},
+        {"billion", 1000000000},
+        {"trillion", 1000000000000},
+        {"quadrillion", 1000000000000000},
+        {"quintillion", 1000000000000000000},
+        {"sextillion", 1000000000000000000000.0},
+        {"septillion", 1000000000000000000000000.0},
+        {"octillion", 1000000000000000000000000000.0},
+        {"nonillion", 1000000000000000000000000000000.0},
+        {"decillion", 1000000000000000000000000000000000.0},
+        {"undecillion", 1000000000000000000000000000000000000.0},
 };
 
 Lexeme* Lexer::getNextLexeme() {
@@ -133,19 +143,28 @@ Lexeme* Lexer::getNextLexeme() {
             return new Lexeme(TokenType::OPEN_SQ_BRACKET, lineNum);
         case 'A':
             return new Lexeme(TokenType::CLOSE_SQ_BRACKET, lineNum);
+        case 'I':
+            if (peek() != 'I') return new Lexeme(TokenType::DELIMITER, lineNum);
+            else return lexMultiChar(c);
         case 'X':
-            return new Lexeme(TokenType::X, lineNum);
+            if (peek() != 'b') return new Lexeme(TokenType::X, lineNum);
         default:
             return lexMultiChar(c);
     }
 }
 
 bool Lexer::validMultiChar(char c) {
-    return isalpha(c) && c != 'C' && c != 'L' && c != 'V' && c != 'D' && c != 'J' && c != 'A' && c != 'O';
+    return isalpha(c) && c != 'C' && c != 'L' && c != 'V' && c != 'D' && c != 'J' && c != 'A' && c != 'O' && c != 'I';
 }
 
 Lexeme* Lexer::lexMultiChar(char c) {
     string word;
+    if (c == 'I') {
+        while (c != '\n' && c != '\0') {
+            file->get(c);
+        }
+        return nullptr;
+    }
     while (validMultiChar(c) && !file->eof()) {
         word.push_back(c);
         file->get(c);
@@ -156,7 +175,7 @@ Lexeme* Lexer::lexMultiChar(char c) {
         file->unget();
         return new Lexeme(type, lineNum);
     } else {
-        if (c == '\n' || c == 'C' || c == 'L' || c == 'V' || c == '\t' || c == '\0' || c == 'D' || c == 'J' || c == 'A' || c == 'O') file->unget();
+        if (c == '\n' || c == 'C' || c == 'L' || c == 'V' || c == '\t' || c == '\0' || c == 'D' || c == 'J' || c == 'A' || c == 'O' || c == 'I') file->unget();
         if (Lexer::digits.count(word) > 0) return lexNumber(word);
         else if (word == "true" || word == "false") return new Lexeme(TokenType::BOOL, lineNum, word == "true");
         else return new Lexeme(TokenType::IDENTIFIER, lineNum, word);
@@ -264,5 +283,3 @@ double Lexer::parseHundredsGroup(vector<string>::reverse_iterator begin, vector<
     }
     return finalVal;
 }
-
-

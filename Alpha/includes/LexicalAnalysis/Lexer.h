@@ -13,6 +13,7 @@
 class Lexer {
     ifstream* file;
     int lineNum;
+    char peek();
     Lexeme* advance(char c);
     Lexeme* getNextLexeme();
     static map<string, TokenType> keywords;

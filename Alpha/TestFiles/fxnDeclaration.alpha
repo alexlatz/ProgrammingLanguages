@@ -1,3 +1,6 @@
-fxn testfxnCa bD L
-    rtrn b
+fxn factorialCaD L
+    if Ca is zeroD L rtrn one J
+    rtrn a X factorialCCa sub oneDD
 J
+
+let c be factorialCone hundred fiftyD

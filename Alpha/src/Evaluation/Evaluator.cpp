@@ -13,10 +13,10 @@ Lexeme* Evaluator::eval(Lexeme* tree, Environment& env) {
         case CHAR:
         case COLLECTION:
             return tree;
-        case IDENTIFIER:
-            return env.lookup(boost::get<string>(tree->getValue()), tree->getLineNum());
         case RETURN:
-            break;
+            return evalReturn(tree, env);
+        case IDENTIFIER:
+            return evalIdentifier(tree, env);
         case IF:
         case ELIF:
             return evalCondition(tree, env);
@@ -25,7 +25,7 @@ Lexeme* Evaluator::eval(Lexeme* tree, Environment& env) {
         case LET:
             return evalLet(tree, env);
         case FXN:
-            break;
+            return evalFxn(tree, env);
         case FOR:
             return evalFor(tree, env);
         case WHILE:
@@ -70,10 +70,16 @@ Lexeme* Evaluator::eval(Lexeme* tree, Environment& env) {
         case NOT:
             return evalNot(tree, env);
         case STATEMENTLIST:
-            return evalStatementList(tree, env);
-        case PARAMETERLIST:
-            break;
+            return evalStatementList(tree, env, TokenType::ENDFILE);
+        default:
+            Alpha::runtimeError(*tree, "Evaluating: Invalid lexeme type");
+            return nullptr;
     }
+}
+
+Lexeme* Evaluator::eval(Lexeme* tree, Environment& env, TokenType caller) {
+    if (tree->getType() == TokenType::STATEMENTLIST) return evalStatementList(tree, env, caller);
+    else eval(tree, env);
 }
 
 Lexeme *Evaluator::evalAdd(Lexeme *tree, Environment &env) {
@@ -171,7 +177,7 @@ Lexeme *Evaluator::evalX(Lexeme *tree, Environment &env) {
             double num = boost::get<double>(second->getValue());
             if (num < 0) val = string(val.rbegin(), val.rend());
             for (int i = 0; i < num; i++) total += val;
-            return new Lexeme(TokenType::STRING, tree->getLineNum(), val + to_string(num));
+            return new Lexeme(TokenType::STRING, tree->getLineNum(), total);
         }
         else Alpha::runtimeError(*tree, "Evaluating: Invalid second operand to X: string");
     }
@@ -399,10 +405,15 @@ Lexeme* Evaluator::evalDec(Lexeme* tree, Environment& env) {
     else Alpha::runtimeError(*tree, "Evaluating: Invalid operand to dec expression");
 }
 
-Lexeme *Evaluator::evalStatementList(Lexeme* tree, Environment& env) {
+Lexeme *Evaluator::evalStatementList(Lexeme* tree, Environment& env, TokenType caller) {
     Lexeme* statementList = new Lexeme(TokenType::STATEMENTLIST, 0);
     for (int i = 0; i < tree->getChildrenLength(); i++) {
-        statementList->setChild(eval(tree->getChild(i), env));
+        Lexeme* result = eval(tree->getChild(i), env);
+        if (result->getType() == TokenType::RETURN) {
+            if (caller == TokenType::FXN) return result->getChild(0);
+            else return result;
+        }
+        statementList->setChild(result);
     }
     return statementList;
 }
@@ -426,7 +437,7 @@ Lexeme* Evaluator::evalCondition(Lexeme* tree, Environment& env) {
     bool condition = boost::get<bool>(conditionLex->getValue());
     if (condition) {
         Environment newEnv(&env);
-        return eval(tree->getChild(1), newEnv);
+        return eval(tree->getChild(1), newEnv, tree->getType());
     } else if (tree->getChildrenLength() > 2) {
         return eval(tree->getChild(2), env);
     }
@@ -435,7 +446,7 @@ Lexeme* Evaluator::evalCondition(Lexeme* tree, Environment& env) {
 
 Lexeme* Evaluator::evalElse(Lexeme* tree, Environment& env) {
     Environment newEnv(&env);
-    return eval(tree->getChild(0), newEnv);
+    return eval(tree->getChild(0), newEnv, tree->getType());
 }
 
 Lexeme* Evaluator::evalFor(Lexeme* tree, Environment& env) {
@@ -445,7 +456,7 @@ Lexeme* Evaluator::evalFor(Lexeme* tree, Environment& env) {
         bool condition = boost::get<bool>(eval(tree->getChild(1), newEnv)->getValue());
         while (condition) {
             Environment newerEnv(&newEnv);
-            body = eval(tree->getChild(3), newerEnv);
+            body = eval(tree->getChild(3), newerEnv, tree->getType());
             eval(tree->getChild(2), newEnv);
             Lexeme* result = eval(tree->getChild(1), newEnv);
             condition = boost::get<bool>(result->getValue());
@@ -460,10 +471,44 @@ Lexeme* Evaluator::evalWhile(Lexeme* tree, Environment& env) {
     bool condition = boost::get<bool>(eval(tree->getChild(0), newEnv)->getValue());
     Lexeme* body;
     while (condition) {
-        body = eval(tree->getChild(1), newEnv);
+        body = eval(tree->getChild(1), newEnv, tree->getType());
         condition = boost::get<bool>(eval(tree->getChild(0), newEnv)->getValue());
     }
     return body;
+}
+
+Lexeme* Evaluator::evalIdentifier(Lexeme* tree, Environment& env) {
+    if (tree->getChildrenLength() == 0) return env.lookup(boost::get<string>(tree->getValue()), tree->getLineNum());
+    else return evalFxnCall(tree, env);
+};
+
+Lexeme* Evaluator::evalFxn(Lexeme *tree, Environment &env) {
+    string name = boost::get<string>(tree->getChild(0)->getValue());
+    env.addSymbol(name, tree);
+    return tree;
+}
+
+Lexeme* Evaluator::evalFxnCall(Lexeme *tree, Environment &env) {
+    string name = boost::get<string>(tree->getValue());
+    Lexeme* function = env.lookup(name, tree->getLineNum());
+    if (function->getChild(1)->getChildrenLength() == tree->getChild(0)->getChildrenLength()) {
+        Environment fxnEnv(&env);
+        Lexeme* paramName = function->getChild(1);
+        Lexeme* paramVal = tree->getChild(0);
+        for (int i = 0; i < paramName->getChildrenLength(); i++) {
+            string name = boost::get<string>(paramName->getChild(i)->getValue());
+            Lexeme* value = eval(paramVal->getChild(i), env);
+            fxnEnv.addSymbol(name, value);
+        }
+        return eval(function->getChild(2), fxnEnv, TokenType::FXN);
+    } else Alpha::runtimeError(*tree, "Evaluating: No function matches these arguments.");
+    return nullptr;
+}
+
+Lexeme* Evaluator::evalReturn(Lexeme *tree, Environment &env) {
+    Lexeme* rtrn = new Lexeme(TokenType::RETURN, tree->getLineNum());
+    rtrn->setChild(eval(tree->getChild(0), env));
+    return rtrn;
 }
 
 
