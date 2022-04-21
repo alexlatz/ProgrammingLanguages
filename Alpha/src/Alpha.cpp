@@ -23,14 +23,15 @@ void Alpha::runFile(const char* path) {
 void Alpha::run(ifstream* file) {
     Lexer lexer(file);
     vector<Lexeme*> lexemes = lexer.lex();
-    for (Lexeme* lex : lexemes) cout << *lex << endl;
+    //for (Lexeme* lex : lexemes) cout << *lex << endl;
     Parser parser(lexemes);
     Lexeme* lex = parser.program();
     Environment global(nullptr);
     Evaluator eval;
-    cout << *eval.eval(lex, global) << endl;
-    cout << "PRINTING GLOBAL ENV" << endl;
-    global.printSymbols();
+    eval.eval(lex, global);
+    //cout << *eval.eval(lex, global) << endl;
+    //cout << "PRINTING GLOBAL ENV" << endl;
+    //global.printSymbols();
 }
 
 void Alpha::syntaxError(int lineNumber, string where, string message) {

@@ -1,5 +1,5 @@
 
-# AlphaLang Cversion Zero One ZeroD
+# AlphaLang Cversion Zero One OneD
 
 ## The programming language with only letters
 
@@ -54,11 +54,6 @@ let var be five II comment
 II comment two
 ```
 
-### Printing
-
-Alpha uses the `printCD` function to print output to the console, and the `printlnCD` function to print with a newline character appended after the input.
-
-You can pass multiple values into either function, and it will print each parameter Cwith a newline appended each time for printlnD.
 
 ## Variables
 
@@ -81,24 +76,41 @@ ex. `zero sub one is zero sub one`
 
 Variables can be modified later through the `be` keyword.
 
-### Strings
+### Strings and Chars
 
-Strings in Alpha are declared between `dB` and `Db` symbols, and must be separated from their endings by a space character.
+Strings in Alpha are declared between `dB` and `Db` symbols, and must be separated from their endings by a space character on either end.
 Additional spaces will be incorporated into the string.
 
-ex. `let name be dB Hello, World! Db`
+Chars follow the same rules, except for the `cB` and `Cb` delimiters before and after the char. `In` is equivalent to the newline char. 
+
+ex. 
+```
+let name be dB Hello, World! Db
+let chr be cB In Cb
+let blank be dB  Db II important: two spaces in between
+```
 
 ## Functions
 
 Functions can be declared using the `fxn` keyword. To provide arguments to a function, enclose a space-separated list of variable names with `CD`.
 
+Multi-parameter functions must separate each parameter with the `I` delimiter character. 
 ```
 fxn squareCxD L
     rtrn x X x
 J
-
+fxn addThreeCaI bI cD L
+    rtrn a add b add c
+J
 squareCfiveD
+addThreeConeI twoI threeD
 ```
+
+### Printing
+
+Alpha uses the `printCD` function to print output to the console, and the `printlnCD` function to print with a newline character appended after the input.
+
+You can pass multiple values into either function, and it will print each parameter Cwith a newline appended each time for printlnD.
 
 ## Operators
 

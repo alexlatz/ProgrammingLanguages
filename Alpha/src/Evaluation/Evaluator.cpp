@@ -134,7 +134,7 @@ Lexeme *Evaluator::evalSub(Lexeme *tree, Environment &env) {
                 while (val.find(finder) != string::npos) val.replace(val.find(finder), string::npos, finder);
                 return new Lexeme(TokenType::STRING, tree->getLineNum(), val);
             } else if (second->getType() == TokenType::CHAR) {
-                string finder = to_string(boost::get<char>(second->getValue()));
+                string finder(1, boost::get<char>(second->getValue()));
                 while (val.find(finder) != string::npos) val.replace(val.find(finder), string::npos, finder);
                 return new Lexeme(TokenType::STRING, tree->getLineNum(), val);
             } else Alpha::runtimeError(*tree, "Evaluating: Invalid second operand to sub: string");
@@ -183,6 +183,15 @@ Lexeme *Evaluator::evalX(Lexeme *tree, Environment &env) {
         }
         else Alpha::runtimeError(*tree, "Evaluating: Invalid second operand to X: string");
     }
+    else if (first->getType() == TokenType::CHAR) {
+        char val = boost::get<char>(first->getValue());
+        if (second->getType() == TokenType::NUMBER) {
+            string total;
+            double num = boost::get<double>(second->getValue());
+            for (int i = 0; i < num; i++) total += val;
+            return new Lexeme(TokenType::STRING, tree->getLineNum(), total);
+        } else Alpha::runtimeError(*tree, "Evaluating: Invalid second operand to X: char");
+    }
     else Alpha::runtimeError(*tree, "Evaluating: Invalid first operand to X expression");
     return nullptr;
 }
@@ -199,11 +208,11 @@ Lexeme *Evaluator::evalDiv(Lexeme *tree, Environment &env) {
         if (second->getType() == TokenType::NUMBER) return new Lexeme(TokenType::STRING, tree->getLineNum(), val.substr(0, boost::get<double>(second->getValue())));
         else if (second->getType() == TokenType::STRING) {
             string finder = boost::get<string>(second->getValue());
-            while (val.find(finder) != string::npos) val.replace(val.find(finder), string::npos, "");
+            while (val.find(finder) != string::npos) val.replace(val.find(finder), finder.size(), "");
             return new Lexeme(TokenType::STRING, tree->getLineNum(), val);
         } else if (second->getType() == TokenType::CHAR) {
-            string finder = to_string(boost::get<char>(second->getValue()));
-            while (val.find(finder) != string::npos) val.replace(val.find(finder), string::npos, "");
+            string finder(1, boost::get<char>(second->getValue()));
+            while (val.find(finder) != string::npos) val.replace(val.find(finder), finder.size(), "");
             return new Lexeme(TokenType::STRING, tree->getLineNum(), val);
         }
         else Alpha::runtimeError(*tree, "Evaluating: Invalid second operand to div: string");

@@ -1,0 +1,15 @@
+let layers be ten
+let pattern be dB ox Db
+let string be dB  Db
+
+for Clet i be oneO i less Cone add Clayers X twoDDO i addbe twoD L
+    let line be pattern X i
+    printlnClineD
+    string addbe Cline add cB In CbD
+J
+
+string divbe cB o Cb
+
+printlnCstringD
+
+

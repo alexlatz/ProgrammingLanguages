@@ -41,8 +41,8 @@ map<string, TokenType> Lexer::keywords {
         {"A", TokenType::CLOSE_SQ_BRACKET},
         {"dB", TokenType::STR_OPEN},
         {"Db", TokenType::STR_CLOSE},
-        {"dC", TokenType::CHAR_OPEN},
-        {"Dc", TokenType::CHAR_CLOSE},
+        {"cB", TokenType::CHAR_OPEN},
+        {"Cb", TokenType::CHAR_CLOSE},
         {"rtrn", TokenType::RETURN},
         {"if", TokenType::IF},
         {"elif", TokenType::ELIF},
@@ -201,7 +201,7 @@ Lexeme* Lexer::advance(char c) {
 
 Lexeme* Lexer::lexQuotes(bool str) {
     string quote;
-    while (!file->eof() && (quote.length() < 3 || (quote.substr(quote.length()-3, 3) != " Db")) && (quote.length() < 3 || quote.substr(quote.length()-3, 3) != " Dc")) {
+    while (!file->eof() && (quote.length() < 3 || (quote.substr(quote.length()-3, 3) != " Db")) && (quote.length() < 3 || quote.substr(quote.length()-3, 3) != " Cb")) {
         char c;
         file->get(c);
         quote.push_back(c);
@@ -209,11 +209,12 @@ Lexeme* Lexer::lexQuotes(bool str) {
     if (str) {
         return new Lexeme(TokenType::STRING, lineNum, quote.substr(0, quote.length()-3));
     } else {
-        if (quote.length() > 4) {
+        if (quote.length() > 4 && !(quote[0] == 'I' && quote[1] == 'n')) {
             Alpha::syntaxError(lineNum, "CHAR", "Invalid char: exceeds one character");
             return nullptr;
         }
-        else return new Lexeme(TokenType::CHAR, lineNum, quote[0]);
+        else if (quote[0] == 'I' && quote[1] == 'n') quote[0] = '\n';
+        return new Lexeme(TokenType::CHAR, lineNum, quote[0]);
     }
 }
 
