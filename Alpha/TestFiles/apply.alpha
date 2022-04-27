@@ -1,0 +1,9 @@
+fxn tripleCsD L
+    rtrn s X three
+J
+
+fxn applyCfI sD L
+    rtrn fCsD
+J
+
+printCapplyCtripleI dB Hello DbDD

@@ -1,0 +1,13 @@
+fxn maxofthreeCaI bI cD L
+    if CCa moreis bD and Ca moreis cDD L
+        rtrn a
+    J
+    elif CCb moreis aD and Cb moreis cDD L
+        rtrn b
+    J
+    else L
+        rtrn c
+    J
+J
+
+printCmaxofthreeCthreeI twoI fourDD

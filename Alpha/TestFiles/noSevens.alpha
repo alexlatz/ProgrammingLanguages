@@ -1,0 +1,13 @@
+fxn nosevensCnD L
+    let digit be zero
+    while CCn more zeroD and Cnot Cdigit is sevenDDD L
+        digit be n mod ten
+        n divbe ten
+    J
+    if Cdigit is sevenD L
+        rtrn false
+    J
+    rtrn true
+J
+
+printCnosevensCten billion two thousand four hundred seventy sixDD

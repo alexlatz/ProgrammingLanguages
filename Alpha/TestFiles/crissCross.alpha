@@ -1,0 +1,11 @@
+fxn crisscrossCsI stI nD L
+    let final be dB  Db
+    for Clet i be zeroO i less nO i addbe twoD L
+        final addbe s
+        final addbe Cst X twoD
+        final addbe s
+    J
+    rtrn final
+J
+
+printCcrisscrossCdB A DbI dB B DbI zeroDD

@@ -137,11 +137,11 @@ bool Parser::booleanOperandPending() {
 }
 
 bool Parser::booleanBinaryExpPending() {
-    return booleanOperandPending() && isBooleanBinaryOperator(peekNext());
+    return isBooleanBinaryOperator(peek());
 }
 
 bool Parser::comparisonPending() {
-    return primaryPending() && isComparisonOperator(peekNext());
+    return isComparisonOperator(peek());
 }
 
 bool Parser::parenthesizedBooleanPending() {
@@ -268,7 +268,7 @@ Lexeme* Parser::fxnCall() {
 Lexeme* Parser::conditional() {
     Lexeme* op = consume(IF);
     consume(TokenType::OPEN_PAREN);
-    op->setChild(condition());
+    op->setChild(booleanOperand());
     consume(TokenType::CLOSE_PAREN);
     op->setChild(block());
     if (check(TokenType::ELIF) || check(TokenType::ELSE)) {
@@ -287,7 +287,7 @@ Lexeme* Parser::elifOrElse() {
     else if (check(TokenType::ELIF)) {
         op = consume(TokenType::ELIF);
         consume(TokenType::OPEN_PAREN);
-        op->setChild(condition());
+        op->setChild(booleanOperand());
         consume(TokenType::CLOSE_PAREN);
         op->setChild(block());
         Lexeme* ending = elifOrElse();
@@ -307,7 +307,7 @@ Lexeme* Parser::loop() {
             root->setChild(consume(TokenType::IDENTIFIER));
         } else if (lineEndPending()) {
             lineEnd();
-            root->setChild(condition());
+            root->setChild(booleanOperand());
             lineEnd();
             root->setChild(expression());
         }
@@ -315,7 +315,7 @@ Lexeme* Parser::loop() {
     } else if (whileLoopPending()) {
         root = consume(TokenType::WHILE);
         consume(TokenType::OPEN_PAREN);
-        root->setChild(condition());
+        root->setChild(booleanOperand());
         consume(TokenType::CLOSE_PAREN);
     } else Alpha::runtimeError(getLineNum(), "Parsing loop", "While or For expected");
     if (root != nullptr) root->setChild(block());
@@ -405,28 +405,33 @@ Lexeme* Parser::block() {
 }
 
 Lexeme* Parser::condition() {
-    if (booleanUnaryExpPending()) return booleanUnaryExp();
-    else if (booleanBinaryExpPending()) return booleanBinaryExp();
-    else if (booleanOperandPending()) return booleanOperand();
+    if (parenthesizedBooleanPending()) return parenthesizedBoolean();
+    else if (booleanUnaryExpPending()) return booleanUnaryExp();
+    else if (check(TokenType::BOOL)) return consume(TokenType::BOOL);
+    else if (check(TokenType::IDENTIFIER)) return consume(TokenType::IDENTIFIER);
     Alpha::runtimeError(getLineNum(), "Parsing Condition", "Expected condition");
     return nullptr;
 }
 
 Lexeme* Parser::booleanOperand() {
-    if (comparisonPending()) return comparison();
-    else if (check(TokenType::BOOL)) return consume(TokenType::BOOL);
-    else if (check(TokenType::IDENTIFIER)) return consume(TokenType::IDENTIFIER);
-    else if (parenthesizedBooleanPending()) return parenthesizedBoolean();
-    else if (booleanUnaryExpPending()) return booleanUnaryExp();
+    Lexeme* val = nullptr;
+    if (parenthesizedBooleanPending()) val = parenthesizedBoolean();
+    else if (booleanUnaryExpPending()) val = booleanUnaryExp();
+    else if (check(TokenType::BOOL)) val = consume(TokenType::BOOL);
+    else if (check(TokenType::IDENTIFIER)) val = consume(TokenType::IDENTIFIER);
+    while (comparisonPending() || booleanBinaryExpPending()) {
+        if (comparisonPending()) val = comparison(val);
+        else if (booleanBinaryExpPending()) val = booleanBinaryExp(val);
+    }
+    if (val != nullptr) return val;
     Alpha::runtimeError(getLineNum(), "Parsing Boolean Operand", "Expected Comparison, boolean, or parenthesized boolean.");
     return nullptr;
 }
 
-Lexeme* Parser::booleanBinaryExp() {
-    Lexeme* first = booleanOperand();
+Lexeme* Parser::booleanBinaryExp(Lexeme* first) {
     Lexeme* op = booleanBinaryOperator();
     op->setChild(first);
-    op->setChild(booleanOperand());
+    op->setChild(condition());
     return op;
 }
 
@@ -436,8 +441,7 @@ Lexeme* Parser::booleanUnaryExp() {
     return op;
 }
 
-Lexeme* Parser::comparison() {
-    Lexeme* first = primary();
+Lexeme* Parser::comparison(Lexeme* first) {
     Lexeme* op = comparisonOperator();
     op->setChild(first);
     op->setChild(primary());
@@ -446,7 +450,7 @@ Lexeme* Parser::comparison() {
 
 Lexeme* Parser::parenthesizedBoolean() {
     consume(TokenType::OPEN_PAREN);
-    Lexeme* lex = condition();
+    Lexeme* lex = booleanOperand();
     consume(TokenType::CLOSE_PAREN);
     return lex;
 }

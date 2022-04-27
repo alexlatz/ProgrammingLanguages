@@ -1,0 +1,17 @@
+fxn factorialCnD L
+    if Cn is zeroD L
+        rtrn one
+    J
+    rtrn n X factorialCCn sub oneDD
+J
+
+fxn factitudeCxI yD L
+    if Cx more yD L
+        rtrn x X factorialCyD
+    J
+    else L
+        rtrn y X factorialCxD
+    J
+J
+
+printCfactitudeCthreeI sixDD

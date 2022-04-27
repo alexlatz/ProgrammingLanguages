@@ -1,0 +1,11 @@
+fxn squaremachineCnD L
+    fxn outCD L
+        let tmp be n
+        rtrn tmp X tmp
+    J
+    rtrn out
+J
+
+let f be squaremachineCthreeD
+
+printCfCDD

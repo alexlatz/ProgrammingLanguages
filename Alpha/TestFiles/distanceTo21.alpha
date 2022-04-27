@@ -1,0 +1,9 @@
+fxn distancetotwentyoneCnD L
+    let diff be twenty one sub n
+    if Cdiff less zeroD L
+        diff Xbe Czero sub twoD
+    J
+    rtrn diff
+J
+
+printCdistancetotwentyoneCCzero sub tenDDD

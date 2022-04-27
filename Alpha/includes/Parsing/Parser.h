@@ -65,9 +65,9 @@ class Parser {
     Lexeme* block();
     Lexeme* condition();
     Lexeme* booleanOperand();
-    Lexeme* booleanBinaryExp();
+    Lexeme* booleanBinaryExp(Lexeme* first);
     Lexeme* booleanUnaryExp();
-    Lexeme* comparison();
+    Lexeme* comparison(Lexeme* first);
     Lexeme* parenthesizedBoolean();
     Lexeme* booleanBinaryOperator();
     Lexeme* comparisonOperator();
