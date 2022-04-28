@@ -69,6 +69,10 @@ void Lexeme::setChild(Lexeme* child, int index) {
     this->children.insert(this->children.begin() + index, child);
 }
 
+void Lexeme::swapChild(Lexeme* child, int index) {
+    this->children[index] = child;
+}
+
 void Lexeme::setChild(Lexeme* child) {
     this->children.push_back(child);
 }

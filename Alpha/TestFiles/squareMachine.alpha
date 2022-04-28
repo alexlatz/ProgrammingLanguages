@@ -6,6 +6,8 @@ fxn squaremachineCnD L
     rtrn out
 J
 
-let f be squaremachineCthreeD
+let f be squaremachineCfourD
+let g be squaremachineCthreeD
 
-printCfCDD
+printlnCfCDD
+printlnCgCDD

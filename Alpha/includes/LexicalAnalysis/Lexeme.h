@@ -10,8 +10,8 @@
 #include <vector>
 #include <boost/variant/variant.hpp>
 #include <boost/variant/get.hpp>
-
 using namespace std;
+
 static vector<string> tokenName = {"NUMBER", "BOOL", "STRING", "CHAR", "COLLECTION", "IDENTIFIER",
                                    "OPEN_PAREN", "CLOSE_PAREN", "OPEN_BLOCK", "CLOSE_BLOCK",
                                    "DELIMITER", "LINE_END", "COMMENT_LINEEND", "OPEN_SQ_BRACKET", "CLOSE_SQ_BRACKET",
@@ -44,6 +44,7 @@ enum TokenType {
     STATEMENTLIST, PARAMETERLIST
 };
 
+
 class Lexeme {
     TokenType type;
     int lineNum;
@@ -72,6 +73,7 @@ public:
     int getChildrenLength();
     void setChild(Lexeme* child, int index);
     void setChild(Lexeme* child);
+    void swapChild(Lexeme* child, int index);
     Lexeme* getChild(int index);
     boost::variant<double, string, char, bool> getValue();
     void setValue(boost::variant<double, string, char, bool> val);

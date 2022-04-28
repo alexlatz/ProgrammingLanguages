@@ -11,6 +11,7 @@
 class Environment {
     Environment* parent;
     map<string, Lexeme*> symbols;
+    map<string, Lexeme*> parameters;
     friend ostream& operator<<(ostream& stream, const Environment& environment) {
         stream << "Environment ID: " << addressof(environment) << "\n";
         if (environment.parent != nullptr) stream << "Parent ID: " << addressof(environment.parent) << "\n";
@@ -23,10 +24,13 @@ class Environment {
     public:
         Environment(Environment* parent);
         Lexeme* lookup(const string& name, int lineNum);
+        bool hasParent();
         bool softLookup(const string& name, int lineNum);
         void addSymbol(const string& name, Lexeme* symbol);
+        void addParameter(const string& name, Lexeme* symbol);
         void modifySymbol(const string& name, Lexeme* newSymbol);
         void printSymbols();
+        map<string, Lexeme*> getParameters();
 };
 
 ostream& operator<<(ostream& stream, const Lexeme& lexeme);

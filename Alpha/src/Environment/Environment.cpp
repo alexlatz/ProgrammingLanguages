@@ -10,6 +10,10 @@ Environment::Environment(Environment *parent) {
     this->parent = parent;
 }
 
+bool Environment::hasParent() {
+    return this->parent != nullptr;
+}
+
 Lexeme *Environment::lookup(const string& name, int lineNum) {
     if (this->symbols.count(name) > 0) return this->symbols.at(name);
     else if (this->parent != nullptr) return this->parent->lookup(name, lineNum);
@@ -26,7 +30,14 @@ bool Environment::softLookup(const string& name, int lineNum) {
 void Environment::addSymbol(const string& name, Lexeme *symbol) {
     if (this->symbols.count(name) == 0) this->symbols.insert(pair<string, Lexeme*>(name, symbol));
     else if (symbol != nullptr) Alpha::runtimeError(*symbol, "Environment: variable already declared");
+}
 
+void Environment::addParameter(const string& name, Lexeme *symbol) {
+    if (this->symbols.count(name) == 0) {
+        this->parameters.insert(pair<string, Lexeme*>(name, symbol));
+        this->symbols.insert(pair<string, Lexeme*>(name, symbol));
+    }
+    else if (symbol != nullptr) Alpha::runtimeError(*symbol, "Environment: variable already declared");
 }
 
 void Environment::modifySymbol(const string& name, Lexeme *newSymbol) {
@@ -41,4 +52,8 @@ void Environment::printSymbols() {
     for (pair<string, Lexeme*> p : this->symbols) {
         cout << p.first << ", " << *(p.second) << endl;
     }
+}
+
+map<string, Lexeme*> Environment::getParameters() {
+    return this->parameters;
 }

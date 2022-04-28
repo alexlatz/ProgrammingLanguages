@@ -508,9 +508,34 @@ Lexeme* Evaluator::evalIdentifier(Lexeme* tree, Environment& env) {
     else return evalFxnCall(tree, env);
 };
 
+void recursiveReplace(Lexeme* look, Lexeme* replace, Lexeme* current) {
+    for (int i = 0; i < current->getChildrenLength(); i++) {
+        if (look->getType() == current->getChild(i)->getType() && look->getValue() == current->getChild(i)->getValue()) {
+            current->swapChild(replace, i);
+        } else if (current->getChild(i)->getChildrenLength() != 0) {
+            recursiveReplace(look, replace, current->getChild(i));
+        }
+    }
+}
+
+Lexeme* recursiveCopy(Lexeme* tree) {
+    Lexeme* copy = new Lexeme(*tree);
+    for (int i = 0; i < copy->getChildrenLength(); i++) {
+        copy->swapChild(recursiveCopy(tree->getChild(i)), i);
+    }
+    return copy;
+}
+
 Lexeme* Evaluator::evalFxn(Lexeme *tree, Environment &env) {
     string name = boost::get<string>(tree->getChild(0)->getValue());
-    env.addSymbol(name, tree);
+    Lexeme* symbol = tree;
+    if (env.hasParent()) {
+        symbol = recursiveCopy(tree);
+        for (pair<string, Lexeme*> p : env.getParameters()) {
+            recursiveReplace(new Lexeme(TokenType::IDENTIFIER, 0, p.first), p.second, symbol);
+        }
+    }
+    env.addSymbol(name, symbol);
     return tree;
 }
 
@@ -526,13 +551,13 @@ Lexeme* Evaluator::evalFxnCall(Lexeme *tree, Environment &env) {
     }
     Lexeme* function = env.lookup(name, tree->getLineNum());
     if (function->getChild(1)->getChildrenLength() == tree->getChild(0)->getChildrenLength()) {
-        Environment fxnEnv(&env);
+        Environment fxnEnv = new Environment(&env);
         Lexeme* paramName = function->getChild(1);
         Lexeme* paramVal = tree->getChild(0);
         for (int i = 0; i < paramName->getChildrenLength(); i++) {
             string name = boost::get<string>(paramName->getChild(i)->getValue());
             Lexeme* value = eval(paramVal->getChild(i), env);
-            fxnEnv.addSymbol(name, value);
+            fxnEnv.addParameter(name, value);
         }
         return eval(function->getChild(2), fxnEnv, TokenType::FXN);
     } else Alpha::runtimeError(*tree, "Evaluating: No function matches these arguments.");
